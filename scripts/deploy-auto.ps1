@@ -1,13 +1,12 @@
 # ClearMedia - deploiement automatise (Windows PowerShell)
-# Usage: depuis la racine du projet
-#   .\scripts\deploy-auto.ps1
-#   .\scripts\deploy-auto.ps1 -GitHubUser "monuser" -RepoName "clearmedia"
+# Usage: depuis la racine du projet (apres: winget install GitHub.cli + gh auth login)
+#   npm run deploy:script
+#   .\scripts\deploy-auto.ps1 -RepoName "clearmedia"
 #
 # Etapes: commit si besoin -> repo GitHub (gh) -> deploiement Vercel (CLI)
 # Premiers lancement: installe GitHub CLI et connecte-toi (gh auth login, vercel login).
 
 param(
-  [string]$GitHubUser = "",
   [string]$RepoName = "clearmedia",
   [switch]$SkipGitHub,
   [switch]$SkipVercel
@@ -56,20 +55,17 @@ if ($status) {
 if (-not $SkipGitHub) {
   $remote = & $git remote get-url origin 2>$null
   if (-not $remote) {
-    if (-not $GitHubUser) {
-      Write-Host ""
-      Write-Host "Pas de remote 'origin'. Options:" -ForegroundColor Yellow
-      Write-Host "  1) Installe GitHub CLI: winget install GitHub.cli"
-      Write-Host "  2) Relance: .\scripts\deploy-auto.ps1 -GitHubUser TON_USER"
-      Write-Host "  Ou ajoute manuellement: git remote add origin https://github.com/USER/REPO.git"
-      Write-Host "  Puis: git push -u origin main"
-      exit 1
-    }
     $gh = Get-Command gh -ErrorAction SilentlyContinue
     if (-not $gh) {
-      Write-Error "GitHub CLI (gh) introuvable. winget install GitHub.cli puis gh auth login"
+      Write-Host ""
+      Write-Host "Installe GitHub CLI puis reconnecte-toi:" -ForegroundColor Yellow
+      Write-Host "  winget install GitHub.cli"
+      Write-Host "  gh auth login"
+      Write-Host "Puis relance: npm run deploy:script"
+      exit 1
     }
-    & gh repo create "$RepoName" --private --source=. --remote=origin --push
+    # Cree le depot sur le compte connecte avec gh auth login
+    & gh repo create $RepoName --private --source=. --remote=origin --push
     Write-Host "Repo GitHub cree et code pousse."
   } else {
     $branch = (& $git branch --show-current).Trim()

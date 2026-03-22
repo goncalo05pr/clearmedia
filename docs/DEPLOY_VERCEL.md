@@ -1,5 +1,24 @@
 # Deployer ClearMedia sur Vercel
 
+## Automatisation (Windows)
+
+Le depot Git est initialise en local avec un premier commit.
+
+1. Installe **GitHub CLI** : `winget install GitHub.cli`
+2. Connecte-toi : `gh auth login`
+3. Connecte **Vercel** une fois : `npx vercel login` (ou suis le lien affiche)
+4. Depuis la racine du projet :
+
+```powershell
+npm run deploy:script
+```
+
+Le script : commit les changements en attente, cree le repo GitHub `clearmedia` (prive) si besoin, pousse le code, puis lance `vercel deploy --prod`.
+
+Ensuite sur [vercel.com](https://vercel.com) : lie le projet au repo Git importe (ou reutilise le deploiement CLI) et ajoute les **variables d environnement**.
+
+---
+
 ## Avant tout
 
 1. **Ne commite jamais** `.env.local` (deja ignore par `.gitignore`).
