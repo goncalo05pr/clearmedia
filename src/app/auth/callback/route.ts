@@ -1,0 +1,49 @@
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import { NextResponse, type NextRequest } from "next/server";
+
+function sanitizeNext(next: string | null): string {
+  if (!next || !next.startsWith("/") || next.startsWith("//")) {
+    return "/espace-membre";
+  }
+  return next;
+}
+
+export async function GET(request: NextRequest) {
+  const requestUrl = new URL(request.url);
+  const code = requestUrl.searchParams.get("code");
+  const next = sanitizeNext(requestUrl.searchParams.get("next"));
+
+  if (!code) {
+    return NextResponse.redirect(new URL("/auth/auth-code-error", requestUrl.origin));
+  }
+
+  const cookieStore = await cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options);
+            });
+          } catch {
+            // ignore si lecture seule
+          }
+        },
+      },
+    },
+  );
+
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  if (error) {
+    return NextResponse.redirect(new URL("/auth/auth-code-error", requestUrl.origin));
+  }
+
+  return NextResponse.redirect(new URL(next, requestUrl.origin));
+}
