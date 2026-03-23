@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useScrollAnimation } from "@/hooks/use-scroll-animation";
 
 export default function Home() {
-  const visibleSections = useScrollAnimation();
 
   return (
     <div className="space-y-32">
