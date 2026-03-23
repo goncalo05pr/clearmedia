@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 type AuthFormProps = {
-  /** Apres connexion reussie (chemins internes uniquement) */
   redirectTo?: string;
 };
 
@@ -15,15 +14,6 @@ function clientOrigin(): string {
   }
   return (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
 }
-
-const tabBase =
-  "rounded-full px-4 py-2 text-sm font-bold transition-all";
-const tabInactive =
-  "text-neutral-400 hover:bg-white/[0.1] hover:text-white hover:scale-105";
-const tabActive = "btn-gradient text-white animate-gradient";
-
-const inputClass =
-  "w-full rounded-2xl border border-white/[0.1] glass-strong px-4 py-4 text-sm text-white placeholder:text-neutral-500 outline-none transition-all focus:border-[#8B5CF6]/50 focus:ring-2 focus:ring-[#8B5CF6]/20 focus:scale-[1.02]";
 
 export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
   const [email, setEmail] = useState("");
@@ -48,10 +38,10 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
       });
       setIsLoading(false);
       if (error) {
-        setMessage(`❌ Erreur: ${error.message}`);
+        setMessage(`Erreur: ${error.message}`);
         return;
       }
-      setMessage("✅ Email envoyé ! Ouvre le lien pour définir un nouveau mot de passe.");
+      setMessage("Email envoyé ! Ouvre le lien pour définir un nouveau mot de passe.");
       return;
     }
 
@@ -66,7 +56,7 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
       setIsLoading(false);
 
       if (error) {
-        setMessage(`❌ Erreur: ${error.message}`);
+        setMessage(`Erreur: ${error.message}`);
         return;
       }
 
@@ -76,7 +66,7 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
         return;
       }
 
-      setMessage("✅ Compte créé ! Vérifie ta boîte mail et clique sur le lien de confirmation.");
+      setMessage("Compte créé ! Vérifie ta boîte mail et clique sur le lien de confirmation.");
       return;
     }
 
@@ -84,7 +74,7 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
     setIsLoading(false);
 
     if (error) {
-      setMessage(`❌ Erreur: ${error.message}`);
+      setMessage(`Erreur: ${error.message}`);
       return;
     }
 
@@ -95,12 +85,12 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
   async function signOut() {
     const supabase = createClient();
     await supabase.auth.signOut();
-    setMessage("✅ Tu es déconnecté.");
+    setMessage("Tu es déconnecté.");
     router.refresh();
   }
 
   return (
-    <div className="glass-strong rounded-3xl p-8 sm:p-10 animate-glow">
+    <div className="glass-strong rounded-3xl p-8 sm:p-10">
       <div className="mb-10 flex flex-wrap gap-3 justify-center">
         <button
           type="button"
@@ -108,9 +98,13 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
             setMode("login");
             setMessage("");
           }}
-          className={`${tabBase} ${mode === "login" ? tabActive : tabInactive}`}
+          className={`rounded-full px-4 py-2 text-sm font-bold transition-all ${
+            mode === "login" 
+              ? "btn-gradient text-white" 
+              : "text-neutral-400 hover:bg-white/10 hover:text-white hover:scale-105"
+          }`}
         >
-          🔐 Connexion
+          Connexion
         </button>
         <button
           type="button"
@@ -118,9 +112,13 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
             setMode("signup");
             setMessage("");
           }}
-          className={`${tabBase} ${mode === "signup" ? tabActive : tabInactive}`}
+          className={`rounded-full px-4 py-2 text-sm font-bold transition-all ${
+            mode === "signup" 
+              ? "btn-gradient text-white" 
+              : "text-neutral-400 hover:bg-white/10 hover:text-white hover:scale-105"
+          }`}
         >
-          ✨ Inscription
+          Inscription
         </button>
         <button
           type="button"
@@ -128,9 +126,13 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
             setMode("reset");
             setMessage("");
           }}
-          className={`${tabBase} ${mode === "reset" ? tabActive : tabInactive}`}
+          className={`rounded-full px-4 py-2 text-sm font-bold transition-all ${
+            mode === "reset" 
+              ? "btn-gradient text-white" 
+              : "text-neutral-400 hover:bg-white/10 hover:text-white hover:scale-105"
+          }`}
         >
-          🔑 Mot de passe oublié
+          Mot de passe oublié
         </button>
       </div>
 
@@ -138,10 +140,10 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
         <input
           required
           type="email"
-          placeholder="📧 Email"
+          placeholder="Email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className={inputClass}
+          className="w-full rounded-2xl border border-white/10 glass-strong px-4 py-4 text-sm text-white placeholder:text-neutral-500 outline-none transition-all focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 focus:scale-105"
           autoComplete="email"
         />
         {mode !== "reset" ? (
@@ -149,17 +151,17 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
             required
             minLength={6}
             type="password"
-            placeholder="🔒 Mot de passe (min. 6 caractères)"
+            placeholder="Mot de passe (min. 6 caractères)"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className={inputClass}
+            className="w-full rounded-2xl border border-white/10 glass-strong px-4 py-4 text-sm text-white placeholder:text-neutral-500 outline-none transition-all focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 focus:scale-105"
             autoComplete={mode === "signup" ? "new-password" : "current-password"}
           />
         ) : null}
         <button
           type="submit"
           disabled={isLoading}
-          className="btn-gradient w-full rounded-full px-6 py-4 text-lg font-bold text-white transition-all hover:scale-105 hover:shadow-2xl disabled:cursor-not-allowed disabled:opacity-50 animate-bounce-slow"
+          className="btn-gradient w-full rounded-full px-6 py-4 text-lg font-bold text-white transition-all hover:scale-105 hover:shadow-2xl disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isLoading ? (
             <span className="flex items-center justify-center gap-2">
@@ -167,11 +169,11 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
               Chargement...
             </span>
           ) : mode === "signup" ? (
-            "🚀 Créer mon compte"
+            "Créer mon compte"
           ) : mode === "reset" ? (
-            "📧 Envoyer le lien"
+            "Envoyer le lien"
           ) : (
-            "🎯 Se connecter"
+            "Se connecter"
           )}
         </button>
       </form>
@@ -181,12 +183,12 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
         onClick={signOut}
         className="mt-6 w-full rounded-full glass-strong px-6 py-3 text-sm font-bold text-neutral-300 transition-all hover:bg-white/10 hover:text-white hover:scale-105"
       >
-        🚪 Se déconnecter
+        Se déconnecter
       </button>
 
       {message ? (
         <div className={`mt-6 p-4 rounded-2xl text-sm leading-relaxed ${
-          message.includes("❌") 
+          message.includes("Erreur") 
             ? "bg-red-500/10 border border-red-500/30 text-red-300" 
             : "bg-green-500/10 border border-green-500/30 text-green-300"
         }`}>
