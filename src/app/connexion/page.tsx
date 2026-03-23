@@ -16,19 +16,26 @@ export default async function ConnexionPage({ searchParams }: PageProps) {
   const redirectTo = sanitizeNext(next);
 
   return (
-    <section>
-      <h1 className="mb-3 text-3xl font-bold">Connexion / Inscription</h1>
-      <p className="mb-8 text-slate-300">
-        Cree ton compte ClearMedia ou connecte-toi pour acceder a tes formations.
-      </p>
+    <div className="mx-auto max-w-lg">
+      <header className="mb-10">
+        <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-[#ff4d2e]">
+          Compte
+        </p>
+        <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+          Connexion
+        </h1>
+        <p className="mt-4 text-neutral-400">
+          Accede a ton espace membre et a tes formations ClearMedia.
+        </p>
+      </header>
 
       {reset === "ok" ? (
-        <div className="mb-6 rounded-lg border border-emerald-800 bg-emerald-950/40 px-4 py-3 text-sm text-emerald-100">
+        <div className="mb-8 rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-sm text-neutral-300">
           Mot de passe mis a jour. Tu peux te connecter avec le nouveau mot de passe.
         </div>
       ) : null}
 
       <AuthForm redirectTo={redirectTo} />
-    </section>
+    </div>
   );
 }

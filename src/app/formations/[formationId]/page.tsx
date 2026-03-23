@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { FormationCurriculum } from "@/components/formation-curriculum";
+import { isAdminUser } from "@/lib/auth-helpers";
 import { getFormationModules } from "@/lib/formation-content";
 import { getFormationById } from "@/lib/formations";
 import { createClient } from "@/lib/supabase/server";
@@ -28,25 +29,32 @@ export default async function FormationDetailPage({ params }: PageProps) {
     redirect(`/connexion?next=/formations/${formationId}`);
   }
 
-  const paidResult = await getPaidFormationIds(supabase, user.id);
-  if (!paidResult.ok) {
-    redirect("/formations");
-  }
-  if (!paidResult.ids.has(formation.id)) {
-    redirect("/formations?reason=locked");
+  if (!isAdminUser(user)) {
+    const paidResult = await getPaidFormationIds(supabase, user.id);
+    if (!paidResult.ok) {
+      redirect("/formations");
+    }
+    if (!paidResult.ids.has(formation.id)) {
+      redirect("/formations?reason=locked");
+    }
   }
 
   return (
     <div>
-      <div className="mb-8">
+      <div className="mb-12">
         <Link
           href="/espace-membre"
-          className="text-sm text-cyan-400 hover:text-cyan-300"
+          className="text-sm text-neutral-500 transition hover:text-[#ff4d2e]"
         >
           Retour espace membre
         </Link>
-        <h1 className="mt-4 text-3xl font-bold">{formation.title}</h1>
-        <p className="mt-2 max-w-2xl text-slate-300">{formation.description}</p>
+        <p className="mt-6 text-xs font-medium uppercase tracking-[0.2em] text-[#ff4d2e]">
+          Programme
+        </p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+          {formation.title}
+        </h1>
+        <p className="mt-4 max-w-2xl text-neutral-400">{formation.description}</p>
       </div>
 
       <FormationCurriculum modules={modules} />

@@ -37,7 +37,7 @@ export function BuyButton({ formationId }: BuyButtonProps) {
       type="button"
       onClick={handleCheckout}
       disabled={isLoading}
-      className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
+      className="w-full rounded-full bg-[#ff4d2e] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#ff6a4d] disabled:cursor-not-allowed disabled:opacity-50"
     >
       {isLoading ? "Redirection..." : "Acheter maintenant"}
     </button>

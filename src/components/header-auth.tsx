@@ -22,7 +22,7 @@ export function HeaderAuth({ email }: HeaderAuthProps) {
     return (
       <Link
         href="/connexion"
-        className="rounded-md bg-cyan-500 px-3 py-2 font-medium text-slate-950 hover:bg-cyan-400"
+        className="ml-1 rounded-full bg-[#ff4d2e] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#ff6a4d]"
       >
         Connexion
       </Link>
@@ -30,14 +30,17 @@ export function HeaderAuth({ email }: HeaderAuthProps) {
   }
 
   return (
-    <div className="flex items-center gap-3">
-      <span className="hidden max-w-[140px] truncate text-xs text-slate-400 sm:inline" title={email}>
+    <div className="ml-1 flex items-center gap-2">
+      <span
+        className="hidden max-w-[120px] truncate text-xs text-neutral-500 sm:inline"
+        title={email}
+      >
         {email}
       </span>
       <button
         type="button"
         onClick={handleLogout}
-        className="rounded-md border border-slate-600 px-3 py-2 text-slate-200 hover:border-cyan-400 hover:text-cyan-300"
+        className="rounded-full border border-white/[0.1] px-3 py-2 text-xs font-medium text-neutral-300 transition hover:border-[#ff4d2e]/40 hover:text-white sm:text-sm"
       >
         Deconnexion
       </button>

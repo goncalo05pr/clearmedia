@@ -16,6 +16,15 @@ function clientOrigin(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
 }
 
+const tabBase =
+  "rounded-full px-4 py-2 text-sm font-medium transition";
+const tabInactive =
+  "text-neutral-500 hover:bg-white/[0.04] hover:text-neutral-300";
+const tabActive = "bg-[#ff4d2e] text-white";
+
+const inputClass =
+  "w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-sm text-white placeholder:text-neutral-600 outline-none transition focus:border-[#ff4d2e]/40 focus:ring-1 focus:ring-[#ff4d2e]/20";
+
 export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -93,17 +102,15 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
   }
 
   return (
-    <div className="max-w-md rounded-xl border border-slate-800 bg-slate-900 p-6">
-      <div className="mb-6 flex flex-wrap gap-2">
+    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 sm:p-8">
+      <div className="mb-8 flex flex-wrap gap-2">
         <button
           type="button"
           onClick={() => {
             setMode("login");
             setMessage("");
           }}
-          className={`rounded-md px-3 py-2 text-sm ${
-            mode === "login" ? "bg-cyan-500 font-semibold text-slate-950" : "bg-slate-800"
-          }`}
+          className={`${tabBase} ${mode === "login" ? tabActive : tabInactive}`}
         >
           Connexion
         </button>
@@ -113,9 +120,7 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
             setMode("signup");
             setMessage("");
           }}
-          className={`rounded-md px-3 py-2 text-sm ${
-            mode === "signup" ? "bg-cyan-500 font-semibold text-slate-950" : "bg-slate-800"
-          }`}
+          className={`${tabBase} ${mode === "signup" ? tabActive : tabInactive}`}
         >
           Inscription
         </button>
@@ -125,9 +130,7 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
             setMode("reset");
             setMessage("");
           }}
-          className={`rounded-md px-3 py-2 text-sm ${
-            mode === "reset" ? "bg-cyan-500 font-semibold text-slate-950" : "bg-slate-800"
-          }`}
+          className={`${tabBase} ${mode === "reset" ? tabActive : tabInactive}`}
         >
           Mot de passe oublie
         </button>
@@ -140,7 +143,8 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
           placeholder="Email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2"
+          className={inputClass}
+          autoComplete="email"
         />
         {mode !== "reset" ? (
           <input
@@ -150,13 +154,14 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
             placeholder="Mot de passe"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2"
+            className={inputClass}
+            autoComplete={mode === "signup" ? "new-password" : "current-password"}
           />
         ) : null}
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full rounded-md bg-cyan-500 px-4 py-2 font-semibold text-slate-950 hover:bg-cyan-400 disabled:opacity-60"
+          className="w-full rounded-full bg-[#ff4d2e] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#ff6a4d] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isLoading
             ? "Chargement..."
@@ -171,12 +176,14 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
       <button
         type="button"
         onClick={signOut}
-        className="mt-3 w-full rounded-md border border-slate-700 px-4 py-2 text-sm hover:border-cyan-400"
+        className="mt-4 w-full rounded-full border border-white/[0.1] px-4 py-2.5 text-sm text-neutral-400 transition hover:border-white/[0.2] hover:text-white"
       >
         Se deconnecter
       </button>
 
-      {message ? <p className="mt-4 text-sm text-slate-300">{message}</p> : null}
+      {message ? (
+        <p className="mt-6 text-sm leading-relaxed text-neutral-400">{message}</p>
+      ) : null}
     </div>
   );
 }

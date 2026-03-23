@@ -65,6 +65,16 @@ to authenticated
 using (auth.uid() = user_id);
 ```
 
+### Compte administrateur
+
+Les utilisateurs avec `role: "admin"` dans **`app_metadata`** ou **`user_metadata`** peuvent acceder a `/espace-membre` et aux programmes sans achat.
+
+Dans Supabase : **Authentication** > **Users** > choisir un utilisateur > **Edit user** > **App Metadata** (JSON), par ex. :
+
+```json
+{ "role": "admin" }
+```
+
 ### URLs de redirection (Authentication > URL Configuration)
 
 Dans **Site URL**, mets ton URL publique, par ex. `https://ton-domaine.com` ou `http://localhost:3000` en dev.
