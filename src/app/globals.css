@@ -1,40 +1,77 @@
 @import "tailwindcss";
 
-/* KLIQZ — premium minimal: canvas #0a0a0a, accent #ff4d2e */
+/* KLIQZ — vibrant marketing design: gradients violet/rouge/orange */
 :root {
-  --canvas: #0a0a0a;
-  --accent: #ff4d2e;
-  --foreground: #e8e8e8;
-  --muted: #737373;
-  --border: rgba(255, 255, 255, 0.06);
-  --surface: rgba(255, 255, 255, 0.02);
+  --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #EC4899 25%, #FF4D2E 50%, #F97316 75%, #8B5CF6 100%);
+  --gradient-secondary: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%);
+  --gradient-accent: linear-gradient(135deg, #FF4D2E 0%, #F97316 50%, #FF4D2E 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 50%, rgba(255, 77, 46, 0.1) 100%);
+  --gradient-bg: linear-gradient(135deg, #0F0A1F 0%, #1A0B2E 25%, #2D1B69 50%, #1A0B2E 75%, #0F0A1F 100%);
+  
+  --color-primary: #8B5CF6;
+  --color-secondary: #EC4899;
+  --color-accent: #FF4D2E;
+  --color-orange: #F97316;
+  --canvas: #0F0A1F;
+  --foreground: #F8FAFC;
+  --muted: #94A3B8;
+  --border: rgba(139, 92, 246, 0.2);
+  --surface: rgba(139, 92, 246, 0.05);
 }
 
 @layer base {
-  :root {
-    --color-canvas: var(--canvas);
-    --color-accent: var(--accent);
-    --color-foreground: var(--foreground);
-    --color-muted: var(--muted);
-    --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-    --font-heading: var(--font-heading-family), ui-sans-serif, sans-serif;
+  * {
+    box-sizing: border-box;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--gradient-bg);
+    background-attachment: fixed;
+    color: var(--foreground);
+    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+
+  /* Animated gradient background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-primary);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    opacity: 0.03;
+    z-index: -1;
+  }
+
+  /* Floating particles */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(255, 77, 46, 0.1) 0%, transparent 50%);
+    animation: float 20s ease-in-out infinite;
+    z-index: -1;
   }
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  background-color: var(--canvas);
-  color: var(--foreground);
-  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 ::selection {
-  background: color-mix(in srgb, var(--accent) 35%, transparent);
+  background: linear-gradient(135deg, #8B5CF6, #EC4899);
   color: #fff;
 }
 
@@ -47,20 +84,230 @@ h5,
 h6,
 .font-heading {
   font-family: var(--font-heading-family), ui-sans-serif, sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.02em;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* Animation pour le bandeau défilant */
+/* Override for white text when needed */
+h1.white-text,
+h2.white-text,
+h3.white-text,
+.text-white-gradient {
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  -webkit-text-fill-color: #ffffff;
+  color: #ffffff;
+}
+
+/* Animations */
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-20px) rotate(1deg); }
+  66% { transform: translateY(10px) rotate(-1deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+@keyframes slideInFromTop {
+  0% { transform: translateY(-100px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInFromBottom {
+  0% { transform: translateY(100px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInFromLeft {
+  0% { transform: translateX(-100px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInFromRight {
+  0% { transform: translateX(100px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
 @keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
+  50% { box-shadow: 0 0 40px rgba(236, 72, 153, 0.8), 0 0 60px rgba(255, 77, 46, 0.6); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Utility classes */
+.animate-gradient {
+  background: var(--gradient-primary);
+  background-size: 400% 400%;
+  animation: gradientShift 8s ease infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce 2s ease-in-out infinite;
 }
 
 .animate-scroll {
   animation: scroll 20s linear infinite;
+}
+
+/* Glassmorphism */
+.glass {
+  background: var(--gradient-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Marketing buttons */
+.btn-gradient {
+  background: var(--gradient-primary);
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gradient:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+}
+
+.btn-gradient::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-gradient:hover::before {
+  left: 100%;
+}
+
+/* Marketing cards */
+.card-gradient {
+  background: var(--gradient-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-gradient::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.card-gradient:hover {
+  transform: translateY(-5px) scale(1.02);
+  border-color: rgba(236, 72, 153, 0.4);
+  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
+}
+
+.card-gradient:hover::before {
+  opacity: 0.1;
+}
+
+/* Scroll animations */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease;
+}
+
+.scroll-animate.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-animate-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: all 0.6s ease;
+}
+
+.scroll-animate-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-animate-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.6s ease;
+}
+
+.scroll-animate-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Enhanced scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 10, 31, 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gradient-primary);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gradient-secondary);
 }

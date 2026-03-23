@@ -17,13 +17,13 @@ function clientOrigin(): string {
 }
 
 const tabBase =
-  "rounded-full px-4 py-2 text-sm font-medium transition";
+  "rounded-full px-4 py-2 text-sm font-bold transition-all";
 const tabInactive =
-  "text-neutral-500 hover:bg-white/[0.04] hover:text-neutral-300";
-const tabActive = "bg-[#ff4d2e] text-white";
+  "text-neutral-400 hover:bg-white/[0.1] hover:text-white hover:scale-105";
+const tabActive = "btn-gradient text-white animate-gradient";
 
 const inputClass =
-  "w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-sm text-white placeholder:text-neutral-600 outline-none transition focus:border-[#ff4d2e]/40 focus:ring-1 focus:ring-[#ff4d2e]/20";
+  "w-full rounded-2xl border border-white/[0.1] glass-strong px-4 py-4 text-sm text-white placeholder:text-neutral-500 outline-none transition-all focus:border-[#8B5CF6]/50 focus:ring-2 focus:ring-[#8B5CF6]/20 focus:scale-[1.02]";
 
 export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
   const [email, setEmail] = useState("");
@@ -48,10 +48,10 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
       });
       setIsLoading(false);
       if (error) {
-        setMessage(error.message);
+        setMessage(`❌ Erreur: ${error.message}`);
         return;
       }
-      setMessage("Email envoye. Ouvre le lien pour definir un nouveau mot de passe.");
+      setMessage("✅ Email envoyé ! Ouvre le lien pour définir un nouveau mot de passe.");
       return;
     }
 
@@ -66,7 +66,7 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
       setIsLoading(false);
 
       if (error) {
-        setMessage(error.message);
+        setMessage(`❌ Erreur: ${error.message}`);
         return;
       }
 
@@ -76,9 +76,7 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
         return;
       }
 
-      setMessage(
-        "Compte cree. Verifie ta boite mail et clique sur le lien de confirmation (si active dans Supabase).",
-      );
+      setMessage("✅ Compte créé ! Vérifie ta boîte mail et clique sur le lien de confirmation.");
       return;
     }
 
@@ -86,7 +84,7 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
     setIsLoading(false);
 
     if (error) {
-      setMessage(error.message);
+      setMessage(`❌ Erreur: ${error.message}`);
       return;
     }
 
@@ -97,13 +95,13 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
   async function signOut() {
     const supabase = createClient();
     await supabase.auth.signOut();
-    setMessage("Tu es deconnecte.");
+    setMessage("✅ Tu es déconnecté.");
     router.refresh();
   }
 
   return (
-    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 sm:p-8">
-      <div className="mb-8 flex flex-wrap gap-2">
+    <div className="glass-strong rounded-3xl p-8 sm:p-10 animate-glow">
+      <div className="mb-10 flex flex-wrap gap-3 justify-center">
         <button
           type="button"
           onClick={() => {
@@ -112,7 +110,7 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
           }}
           className={`${tabBase} ${mode === "login" ? tabActive : tabInactive}`}
         >
-          Connexion
+          🔐 Connexion
         </button>
         <button
           type="button"
@@ -122,7 +120,7 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
           }}
           className={`${tabBase} ${mode === "signup" ? tabActive : tabInactive}`}
         >
-          Inscription
+          ✨ Inscription
         </button>
         <button
           type="button"
@@ -132,15 +130,15 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
           }}
           className={`${tabBase} ${mode === "reset" ? tabActive : tabInactive}`}
         >
-          Mot de passe oublie
+          🔑 Mot de passe oublié
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <input
           required
           type="email"
-          placeholder="Email"
+          placeholder="📧 Email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           className={inputClass}
@@ -151,7 +149,7 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
             required
             minLength={6}
             type="password"
-            placeholder="Mot de passe"
+            placeholder="🔒 Mot de passe (min. 6 caractères)"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             className={inputClass}
@@ -161,28 +159,39 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full rounded-full bg-[#ff4d2e] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#ff6a4d] disabled:cursor-not-allowed disabled:opacity-50"
+          className="btn-gradient w-full rounded-full px-6 py-4 text-lg font-bold text-white transition-all hover:scale-105 hover:shadow-2xl disabled:cursor-not-allowed disabled:opacity-50 animate-bounce-slow"
         >
-          {isLoading
-            ? "Chargement..."
-            : mode === "signup"
-              ? "Creer mon compte"
-              : mode === "reset"
-                ? "Envoyer le lien"
-                : "Se connecter"}
+          {isLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              Chargement...
+            </span>
+          ) : mode === "signup" ? (
+            "🚀 Créer mon compte"
+          ) : mode === "reset" ? (
+            "📧 Envoyer le lien"
+          ) : (
+            "🎯 Se connecter"
+          )}
         </button>
       </form>
 
       <button
         type="button"
         onClick={signOut}
-        className="mt-4 w-full rounded-full border border-white/[0.1] px-4 py-2.5 text-sm text-neutral-400 transition hover:border-white/[0.2] hover:text-white"
+        className="mt-6 w-full rounded-full glass-strong px-6 py-3 text-sm font-bold text-neutral-300 transition-all hover:bg-white/10 hover:text-white hover:scale-105"
       >
-        Se deconnecter
+        🚪 Se déconnecter
       </button>
 
       {message ? (
-        <p className="mt-6 text-sm leading-relaxed text-neutral-400">{message}</p>
+        <div className={`mt-6 p-4 rounded-2xl text-sm leading-relaxed ${
+          message.includes("❌") 
+            ? "bg-red-500/10 border border-red-500/30 text-red-300" 
+            : "bg-green-500/10 border border-green-500/30 text-green-300"
+        }`}>
+          {message}
+        </div>
       ) : null}
     </div>
   );

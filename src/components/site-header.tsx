@@ -11,9 +11,12 @@ export async function SiteHeader() {
   } = await supabase.auth.getUser();
 
   let showMemberArea = false;
+  let isAdmin = false;
+  
   if (user) {
     if (isAdminUser(user)) {
       showMemberArea = true;
+      isAdmin = true;
     } else {
       const paidResult = await getPaidFormationIds(supabase, user.id);
       showMemberArea = paidResult.ok && paidResult.ids.size > 0;
@@ -21,34 +24,43 @@ export async function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0a0a0a]/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 glass-strong">
       <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-5 sm:px-6">
         <Link
           href="/"
-          className="font-heading text-lg font-semibold tracking-tight text-white transition-colors hover:text-[#ff4d2e]"
+          className="font-heading text-lg font-bold tracking-tight text-white transition-all hover:scale-105 hover:text-transparent hover:bg-gradient-to-r hover:from-[#8B5CF6] hover:to-[#EC4899] hover:bg-clip-text"
         >
           KLIQZ
         </Link>
         <div className="flex items-center gap-1 text-sm sm:gap-2">
           <Link
             href="/"
-            className="rounded-lg px-3 py-2 text-neutral-400 transition-colors hover:bg-white/[0.04] hover:text-white"
+            className="rounded-lg px-3 py-2 text-neutral-300 transition-all hover:bg-white/[0.1] hover:text-white hover:scale-105"
           >
             Accueil
           </Link>
           <Link
             href="/formations"
-            className="rounded-lg px-3 py-2 text-neutral-400 transition-colors hover:bg-white/[0.04] hover:text-white"
+            className="rounded-lg px-3 py-2 text-neutral-300 transition-all hover:bg-white/[0.1] hover:text-white hover:scale-105"
           >
             Formations
           </Link>
           {showMemberArea ? (
             <Link
               href="/espace-membre"
-              className="rounded-lg px-2 py-2 text-neutral-400 transition-colors hover:bg-white/[0.04] hover:text-white sm:px-3"
+              className="rounded-lg px-2 py-2 text-neutral-300 transition-all hover:bg-white/[0.1] hover:text-white hover:scale-105 sm:px-3"
             >
               <span className="hidden sm:inline">Espace membre</span>
               <span className="sm:hidden">Membre</span>
+            </Link>
+          ) : null}
+          {isAdmin ? (
+            <Link
+              href="/admin"
+              className="rounded-lg px-2 py-2 text-neutral-300 transition-all hover:bg-red-500/20 hover:text-red-300 hover:scale-105 sm:px-3"
+            >
+              <span className="hidden sm:inline">🚀 Admin</span>
+              <span className="sm:hidden">🚀</span>
             </Link>
           ) : null}
           <HeaderAuth email={user?.email ?? null} />
