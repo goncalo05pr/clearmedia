@@ -14,7 +14,10 @@ export async function GET(request: NextRequest) {
   const code = requestUrl.searchParams.get("code");
   const next = sanitizeNext(requestUrl.searchParams.get("next"));
 
+  console.log("Auth callback:", { code: !!code, next, origin: requestUrl.origin });
+
   if (!code) {
+    console.error("No code provided in auth callback");
     return NextResponse.redirect(new URL("/auth/auth-code-error", requestUrl.origin));
   }
 
@@ -42,8 +45,10 @@ export async function GET(request: NextRequest) {
 
   const { error } = await supabase.auth.exchangeCodeForSession(code);
   if (error) {
+    console.error("Error exchanging code for session:", error);
     return NextResponse.redirect(new URL("/auth/auth-code-error", requestUrl.origin));
   }
 
+  console.log("Successfully exchanged code for session, redirecting to:", next);
   return NextResponse.redirect(new URL(next, requestUrl.origin));
 }

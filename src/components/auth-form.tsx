@@ -12,7 +12,8 @@ function clientOrigin(): string {
   if (typeof window !== "undefined") {
     return window.location.origin;
   }
-  return (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
+  // En production, utilise l'URL du site
+  return "https://kliqz.vercel.app";
 }
 
 export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
@@ -28,16 +29,23 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
     setIsLoading(true);
     setMessage("");
 
+    console.log("Auth attempt:", { mode, email });
+
     const supabase = createClient();
     const origin = clientOrigin();
     const callbackUrl = `${origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`;
+    
+    console.log("Using origin:", origin);
+    console.log("Callback URL:", callbackUrl);
 
     if (mode === "reset") {
+      console.log("Sending reset password email to:", email);
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${origin}/auth/callback?next=${encodeURIComponent("/auth/reset-password")}`,
       });
       setIsLoading(false);
       if (error) {
+        console.error("Reset password error:", error);
         setMessage(`Erreur: ${error.message}`);
         return;
       }
@@ -56,6 +64,7 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
       setIsLoading(false);
 
       if (error) {
+        console.error("Signup error:", error);
         setMessage(`Erreur: ${error.message}`);
         return;
       }
@@ -74,6 +83,7 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
     setIsLoading(false);
 
     if (error) {
+      console.error("Login error:", error);
       setMessage(`Erreur: ${error.message}`);
       return;
     }
