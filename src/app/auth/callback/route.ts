@@ -1,6 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { NextResponse, type NextRequest } from "next/server";
 
 function sanitizeNext(next: string | null): string {
   if (!next || !next.startsWith("/") || next.startsWith("//")) {
@@ -9,16 +8,16 @@ function sanitizeNext(next: string | null): string {
   return next;
 }
 
-export async function GET(request: NextRequest) {
-  const requestUrl = new URL(request.url);
-  const code = requestUrl.searchParams.get("code");
-  const next = sanitizeNext(requestUrl.searchParams.get("next"));
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const code = searchParams.get("code");
+  const next = sanitizeNext(searchParams.get("next"));
 
-  console.log("Auth callback:", { code: !!code, next, origin: requestUrl.origin });
+  console.log("Auth callback:", { code: !!code, next, origin: new URL(request.url).origin });
 
   if (!code) {
     console.error("No code provided in auth callback");
-    return NextResponse.redirect(new URL("/auth/auth-code-error", requestUrl.origin));
+    return Response.redirect(new URL("/auth/auth-code-error", new URL(request.url).origin));
   }
 
   const cookieStore = await cookies();
@@ -46,9 +45,9 @@ export async function GET(request: NextRequest) {
   const { error } = await supabase.auth.exchangeCodeForSession(code);
   if (error) {
     console.error("Error exchanging code for session:", error);
-    return NextResponse.redirect(new URL("/auth/auth-code-error", requestUrl.origin));
+    return Response.redirect(new URL("/auth/auth-code-error", new URL(request.url).origin));
   }
 
   console.log("Successfully exchanged code for session, redirecting to:", next);
-  return NextResponse.redirect(new URL(next, requestUrl.origin));
+  return Response.redirect(new URL(next, new URL(request.url).origin));
 }

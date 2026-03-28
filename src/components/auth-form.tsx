@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { PasswordInput } from "@/components/ui/password-input";
 
 type AuthFormProps = {
   redirectTo?: string;
@@ -157,14 +158,12 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
           autoComplete="email"
         />
         {mode !== "reset" ? (
-          <input
+          <PasswordInput
             required
             minLength={6}
-            type="password"
-            placeholder="Mot de passe (min. 6 caractères)"
+            placeholder="🔒 Mot de passe (min. 6 caractères)"
             value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="w-full rounded-2xl border border-white/10 glass-strong px-4 py-4 text-sm text-white placeholder:text-neutral-500 outline-none transition-all focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 focus:scale-105"
+            onChange={setPassword}
             autoComplete={mode === "signup" ? "new-password" : "current-password"}
           />
         ) : null}

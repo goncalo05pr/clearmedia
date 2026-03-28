@@ -46,13 +46,22 @@ export async function SiteHeader() {
             Formations
           </Link>
           {showMemberArea ? (
-            <Link
-              href="/espace-membre"
-              className="rounded-lg px-2 py-2 text-neutral-300 transition-all hover:bg-white/[0.1] hover:text-white hover:scale-105 sm:px-3"
-            >
-              <span className="hidden sm:inline">Espace membre</span>
-              <span className="sm:hidden">Membre</span>
-            </Link>
+            <>
+              <Link
+                href="/profil"
+                className="rounded-lg px-2 py-2 text-neutral-300 transition-all hover:bg-white/[0.1] hover:text-white hover:scale-105 sm:px-3"
+              >
+                <span className="hidden sm:inline">👤 Mon profil</span>
+                <span className="sm:hidden">👤</span>
+              </Link>
+              <Link
+                href="/espace-membre"
+                className="rounded-lg px-2 py-2 text-neutral-300 transition-all hover:bg-white/[0.1] hover:text-white hover:scale-105 sm:px-3"
+              >
+                <span className="hidden sm:inline">Espace membre</span>
+                <span className="sm:hidden">Membre</span>
+              </Link>
+            </>
           ) : null}
           {isAdmin ? (
             <Link
