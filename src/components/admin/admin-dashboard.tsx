@@ -9,6 +9,11 @@ import HRModule from "@/components/admin/hr-module";
 import MarketingModule from "@/components/admin/marketing-module";
 import SupportModule from "@/components/admin/support-module";
 import SettingsModule from "@/components/admin/settings-module";
+import ChatModule from "@/components/admin/chat-module";
+import CalendarModule from "@/components/admin/calendar-module";
+import AutomationModule from "@/components/admin/automation-module";
+import EmployeesModule from "@/components/admin/employees-module";
+import InvoicingModule from "@/components/admin/invoicing-module";
 
 export default function AdminDashboard() {
   const [activeModule, setActiveModule] = useState('dashboard');
@@ -44,7 +49,12 @@ export default function AdminDashboard() {
     { id: 'hr', name: 'RH', icon: '👥', component: HRModule },
     { id: 'marketing', name: 'Marketing', icon: '📈', component: MarketingModule },
     { id: 'support', name: 'Support', icon: '🎧', component: SupportModule },
-    { id: 'settings', name: 'Paramètres', icon: '⚙️', component: SettingsModule }
+    { id: 'settings', name: 'Paramètres', icon: '⚙️', component: SettingsModule },
+    { id: 'chat', name: 'Chat Interne', icon: '💬', component: ChatModule },
+    { id: 'calendar', name: 'Calendrier', icon: '📅', component: CalendarModule },
+    { id: 'automation', name: 'Automatisation', icon: '🤖', component: AutomationModule },
+    { id: 'employees', name: 'Employés', icon: '👥', component: EmployeesModule },
+    { id: 'invoicing', name: 'Facturation', icon: '🧾', component: InvoicingModule }
   ];
 
   if (loading) {
