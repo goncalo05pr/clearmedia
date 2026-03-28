@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { FormationCurriculum } from "@/components/formation-curriculum";
 import { isAdminUser } from "@/lib/auth-helpers";
-import { getFormationModules } from "@/lib/formation-content";
 import { getFormationById } from "@/lib/formations";
 import { createClient } from "@/lib/supabase/server";
 import { getPaidFormationIds } from "@/lib/user-purchases";
+import FormationContent from "@/components/formation-content";
 
 type PageProps = {
   params: Promise<{ formationId: string }>;
@@ -14,9 +13,8 @@ type PageProps = {
 export default async function FormationDetailPage({ params }: PageProps) {
   const { formationId } = await params;
   const formation = getFormationById(formationId);
-  const modules = getFormationModules(formationId);
 
-  if (!formation || !modules) {
+  if (!formation) {
     notFound();
   }
 
@@ -57,7 +55,7 @@ export default async function FormationDetailPage({ params }: PageProps) {
         <p className="mt-4 max-w-2xl text-neutral-400">{formation.description}</p>
       </div>
 
-      <FormationCurriculum modules={modules} />
+      <FormationContent formationId={formationId} />
     </div>
   );
 }
