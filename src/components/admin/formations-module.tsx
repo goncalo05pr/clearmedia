@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
 
 interface Formation {
   id: string;
@@ -9,320 +8,235 @@ interface Formation {
   description: string;
   price: number;
   duration: string;
-  level: 'beginner' | 'intermediate' | 'advanced';
+  level: string;
   category: string;
-  is_published: boolean;
-  created_at: string;
-  updated_at: string;
+  studentsCount: number;
+  status: 'active' | 'inactive' | 'draft';
+  createdAt: string;
 }
 
-interface Module {
-  id: string;
-  formation_id: string;
-  title: string;
-  description: string;
-  duration: number;
-  order: number;
-  is_published: boolean;
-}
-
-export function FormationsModule() {
+export default function FormationsModule() {
   const [formations, setFormations] = useState<Formation[]>([]);
-  const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAddFormation, setShowAddFormation] = useState(false);
-  const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
-  const [editingModule, setEditingModule] = useState<Module | null>(null);
-
-  const [newFormation, setNewFormation] = useState({
-    title: '',
-    description: '',
-    price: 0,
-    duration: '',
-    level: 'beginner' as 'beginner' | 'intermediate' | 'advanced',
-    category: '',
-    is_published: false
-  });
-
-  const [newModule, setNewModule] = useState({
-    formation_id: '',
-    title: '',
-    description: '',
-    duration: 0,
-    order: 0,
-    is_published: false
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingFormation, setEditingFormation] = useState<Formation | null>(null);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    price: "",
+    duration: "",
+    level: "",
+    category: ""
   });
 
   useEffect(() => {
-    fetchFormationsData();
+    // Simuler des données - en production, ça viendrait de Supabase
+    const loadFormations = async () => {
+      try {
+        const mockFormations: Formation[] = [
+          {
+            id: "1",
+            title: "Social Ads Mastery",
+            description: "Maîtrise complète des publicités sur réseaux sociaux",
+            price: 497,
+            duration: "8 semaines",
+            level: "Débutant à avancé",
+            category: "Marketing Digital",
+            studentsCount: 156,
+            status: "active",
+            createdAt: "2024-01-15"
+          },
+          {
+            id: "2",
+            title: "Funnel Premium",
+            description: "Création et optimisation de tunnels de vente",
+            price: 997,
+            duration: "12 semaines",
+            level: "Intermédiaire",
+            category: "Marketing Digital",
+            studentsCount: 89,
+            status: "active",
+            createdAt: "2024-02-01"
+          },
+          {
+            id: "3",
+            title: "Copy Closing",
+            description: "Techniques de copywriting pour convertir",
+            price: 397,
+            duration: "6 semaines",
+            level: "Débutant",
+            category: "Marketing Digital",
+            studentsCount: 234,
+            status: "active",
+            createdAt: "2024-01-20"
+          }
+        ];
+
+        setFormations(mockFormations);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error loading formations:', error);
+        setLoading(false);
+      }
+    };
+
+    loadFormations();
   }, []);
 
-  const fetchFormationsData = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     try {
-      const supabase = createClient();
-      
-      const { data: formationsData } = await supabase.from("formations").select("*");
-      const { data: modulesData } = await supabase.from("formation_modules").select("*");
-      
-      if (formationsData) setFormations(formationsData);
-      if (modulesData) setModules(modulesData);
-    } catch (error) {
-      console.error("Error fetching formations data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const addFormation = async () => {
-    try {
-      const supabase = createClient();
-      const { data } = await supabase.from("formations").insert([newFormation]).select();
-      if (data) {
-        setFormations([...formations, data[0]]);
-        setShowAddFormation(false);
-        setNewFormation({
-          title: '',
-          description: '',
-          price: 0,
-          duration: '',
-          level: 'beginner',
-          category: '',
-          is_published: false
-        });
+      if (editingFormation) {
+        // Logique de modification
+        console.log('Updating formation:', editingFormation.id, formData);
+        // En production: await supabase.from('formations').update(formData).eq('id', editingFormation.id);
+        setFormations(formations.map(f => 
+          f.id === editingFormation.id 
+            ? { ...f, title: formData.title, description: formData.description, price: parseFloat(formData.price), duration: formData.duration, level: formData.level, category: formData.category }
+            : f
+        ));
+        setEditingFormation(null);
+      } else {
+        // Logique d'ajout
+        console.log('Adding formation:', formData);
+        // En production: await supabase.from('formations').insert(formData);
+        const newFormation: Formation = {
+          id: Date.now().toString(),
+          title: formData.title,
+          description: formData.description,
+          price: parseFloat(formData.price),
+          duration: formData.duration,
+          level: formData.level,
+          category: formData.category,
+          studentsCount: 0,
+          status: 'draft',
+          createdAt: new Date().toISOString()
+        };
+        setFormations([...formations, newFormation]);
       }
+      
+      setFormData({ title: "", description: "", price: "", duration: "", level: "", category: "" });
+      setShowAddModal(false);
     } catch (error) {
-      console.error("Error adding formation:", error);
+      console.error('Error saving formation:', error);
     }
   };
 
-  const addModule = async () => {
-    try {
-      const supabase = createClient();
-      const { data } = await supabase.from("formation_modules").insert([newModule]).select();
-      if (data) {
-        setModules([...modules, data[0]]);
-        setNewModule({
-          formation_id: '',
-          title: '',
-          description: '',
-          duration: 0,
-          order: 0,
-          is_published: false
-        });
+  const handleEdit = (formation: Formation) => {
+    setEditingFormation(formation);
+    setFormData({
+      title: formation.title,
+      description: formation.description,
+      price: formation.price.toString(),
+      duration: formation.duration,
+      level: formation.level,
+      category: formation.category
+    });
+    setShowAddModal(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette formation ?')) {
+      try {
+        console.log('Deleting formation:', id);
+        // En production: await supabase.from('formations').delete().eq('id', id);
+        setFormations(formations.filter(f => f.id !== id));
+      } catch (error) {
+        console.error('Error deleting formation:', error);
       }
-    } catch (error) {
-      console.error("Error adding module:", error);
     }
   };
 
-  const toggleFormationStatus = async (formationId: string, isPublished: boolean) => {
+  const handleStatusToggle = async (id: string, currentStatus: string) => {
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
     try {
-      const supabase = createClient();
-      await supabase.from("formations").update({ is_published: isPublished }).eq("id", formationId);
-      setFormations(formations.map(f => f.id === formationId ? { ...f, is_published: isPublished } : f));
+      console.log('Toggling formation status:', id, newStatus);
+      // En production: await supabase.from('formations').update({ status: newStatus }).eq('id', id);
+      setFormations(formations.map(f => 
+        f.id === id ? { ...f, status: newStatus } : f
+      ));
     } catch (error) {
-      console.error("Error updating formation:", error);
-    }
-  };
-
-  const deleteFormation = async (formationId: string) => {
-    try {
-      const supabase = createClient();
-      await supabase.from("formations").delete().eq("id", formationId);
-      setFormations(formations.filter(f => f.id !== formationId));
-    } catch (error) {
-      console.error("Error deleting formation:", error);
-    }
-  };
-
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case 'beginner': return 'bg-green-500/20 text-green-300';
-      case 'intermediate': return 'bg-yellow-500/20 text-yellow-300';
-      case 'advanced': return 'bg-red-500/20 text-red-300';
-      default: return 'bg-gray-500/20 text-gray-300';
-    }
-  };
-
-  const getLevelLabel = (level: string) => {
-    switch (level) {
-      case 'beginner': return '🌱 Débutant';
-      case 'intermediate': return '🌿 Intermédiaire';
-      case 'advanced': return '🌳 Avancé';
-      default: return level;
+      console.error('Error toggling formation status:', error);
     }
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-64">
-        <div className="animate-spin w-12 h-12 border-4 border-[#8B5CF6] border-t-transparent rounded-full"></div>
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      {/* Stats Cards */}
-      <div className="grid gap-6 md:grid-cols-4">
-        <div className="card-gradient rounded-2xl p-6">
-          <div className="text-3xl mb-3 bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] bg-clip-text text-transparent">
-            📚
-          </div>
-          <div className="text-2xl font-black text-white">{formations.length}</div>
-          <div className="text-sm text-neutral-300">Total Formations</div>
-        </div>
-        <div className="card-gradient rounded-2xl p-6">
-          <div className="text-3xl mb-3 bg-gradient-to-r from-[#EC4899] to-[#FF4D2E] bg-clip-text text-transparent">
-            📖
-          </div>
-          <div className="text-2xl font-black text-white">{modules.length}</div>
-          <div className="text-sm text-neutral-300">Total Modules</div>
-        </div>
-        <div className="card-gradient rounded-2xl p-6">
-          <div className="text-3xl mb-3 bg-gradient-to-r from-[#FF4D2E] to-[#F97316] bg-clip-text text-transparent">
-            ✅
-          </div>
-          <div className="text-2xl font-black text-white">{formations.filter(f => f.is_published).length}</div>
-          <div className="text-sm text-neutral-300">Publiées</div>
-        </div>
-        <div className="card-gradient rounded-2xl p-6">
-          <div className="text-3xl mb-3 bg-gradient-to-r from-[#F97316] to-[#8B5CF6] bg-clip-text text-transparent">
-            💰
-          </div>
-          <div className="text-2xl font-black text-white">
-            {formations.reduce((sum, f) => sum + f.price, 0).toLocaleString()}€
-          </div>
-          <div className="text-sm text-neutral-300">Valeur Totale</div>
-        </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex gap-4">
+    <div className="space-y-6">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-semibold text-white">📚 Gestion des Formations</h3>
         <button
-          onClick={() => setShowAddFormation(true)}
-          className="btn-gradient px-6 py-3 rounded-xl font-bold text-white hover:scale-105"
+          onClick={() => setShowAddModal(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium"
         >
-          ➕ Ajouter une formation
-        </button>
-        <button
-          onClick={() => setEditingModule({} as Module)}
-          className="glass-strong px-6 py-3 rounded-xl font-bold text-white hover:bg-white/20 hover:scale-105"
-        >
-          📖 Ajouter un module
+          + Ajouter une formation
         </button>
       </div>
 
       {/* Formations Table */}
-      <div className="glass-strong rounded-2xl p-6">
-        <h3 className="text-2xl font-bold text-white mb-6">📚 Gestion des Formations</h3>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead>
-              <tr className="border-b border-white/10">
-                <th className="text-left py-3 px-4 text-white font-bold">Titre</th>
-                <th className="text-left py-3 px-4 text-white font-bold">Catégorie</th>
-                <th className="text-left py-3 px-4 text-white font-bold">Niveau</th>
-                <th className="text-left py-3 px-4 text-white font-bold">Prix</th>
-                <th className="text-left py-3 px-4 text-white font-bold">Durée</th>
-                <th className="text-left py-3 px-4 text-white font-bold">Statut</th>
-                <th className="text-left py-3 px-4 text-white font-bold">Actions</th>
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Formation</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durée</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Niveau</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Étudiants</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-200">
               {formations.map((formation) => (
-                <tr key={formation.id} className="border-b border-white/5 hover:bg-white/5">
-                  <td className="py-3 px-4">
-                    <div>
-                      <div className="font-semibold text-white">{formation.title}</div>
-                      <div className="text-sm text-neutral-400">{formation.description.slice(0, 50)}...</div>
-                    </div>
+                <tr key={formation.id}>
+                  <td className="px-6 py-4">
+                    <div className="font-medium text-gray-900">{formation.title}</div>
+                    <div className="text-sm text-gray-600">{formation.category}</div>
                   </td>
-                  <td className="py-3 px-4 text-neutral-300">{formation.category}</td>
-                  <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-lg text-xs font-bold ${getLevelColor(formation.level)}`}>
-                      {getLevelLabel(formation.level)}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-lg font-bold text-[#8B5CF6]">{formation.price}€</td>
-                  <td className="py-3 px-4 text-neutral-300">{formation.duration}</td>
-                  <td className="py-3 px-4">
-                    <button
-                      onClick={() => toggleFormationStatus(formation.id, !formation.is_published)}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold ${
-                        formation.is_published 
-                          ? 'bg-green-500/20 text-green-300 hover:bg-green-500/30' 
-                          : 'bg-gray-500/20 text-gray-300 hover:bg-gray-500/30'
-                      }`}
-                    >
-                      {formation.is_published ? '✅ Publiée' : '📝 Brouillon'}
-                    </button>
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setSelectedFormation(formation)}
-                        className="glass-strong px-3 py-1 rounded-lg text-sm font-bold hover:bg-white/20"
-                      >
-                        👁️
-                      </button>
-                      <button
-                        onClick={() => deleteFormation(formation.id)}
-                        className="glass-strong px-3 py-1 rounded-lg text-sm font-bold bg-red-500/20 hover:bg-red-500/30 text-red-300"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Modules Table */}
-      <div className="glass-strong rounded-2xl p-6">
-        <h3 className="text-2xl font-bold text-white mb-6">📖 Gestion des Modules</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-white/10">
-                <th className="text-left py-3 px-4 text-white font-bold">Module</th>
-                <th className="text-left py-3 px-4 text-white font-bold">Formation</th>
-                <th className="text-left py-3 px-4 text-white font-bold">Durée</th>
-                <th className="text-left py-3 px-4 text-white font-bold">Ordre</th>
-                <th className="text-left py-3 px-4 text-white font-bold">Statut</th>
-                <th className="text-left py-3 px-4 text-white font-bold">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {modules.map((module) => (
-                <tr key={module.id} className="border-b border-white/5 hover:bg-white/5">
-                  <td className="py-3 px-4">
-                    <div>
-                      <div className="font-semibold text-white">{module.title}</div>
-                      <div className="text-sm text-neutral-400">{module.description.slice(0, 50)}...</div>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4 text-neutral-300">
-                    {formations.find(f => f.id === module.formation_id)?.title || 'N/A'}
-                  </td>
-                  <td className="py-3 px-4 text-neutral-300">{module.duration}min</td>
-                  <td className="py-3 px-4 text-neutral-300">{module.order}</td>
-                  <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-lg text-xs font-bold ${
-                      module.is_published 
-                        ? 'bg-green-500/20 text-green-300' 
-                        : 'bg-gray-500/20 text-gray-300'
+                  <td className="px-6 py-4 font-medium text-gray-900">{formation.price}€</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{formation.duration}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{formation.level}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{formation.studentsCount}</td>
+                  <td className="px-6 py-4">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      formation.status === 'active' ? 'bg-green-100 text-green-800' :
+                      formation.status === 'inactive' ? 'bg-red-100 text-red-800' :
+                      'bg-gray-100 text-gray-800'
                     }`}>
-                      {module.is_published ? '✅ Publié' : '📝 Brouillon'}
+                      {formation.status === 'active' ? 'Active' : formation.status === 'inactive' ? 'Inactive' : 'Brouillon'}
                     </span>
                   </td>
-                  <td className="py-3 px-4">
-                    <button className="glass-strong px-3 py-1 rounded-lg text-sm font-bold hover:bg-white/20">
-                      ✏️
-                    </button>
+                  <td className="px-6 py-4">
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleEdit(formation)}
+                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        Modifier
+                      </button>
+                      <button
+                        onClick={() => handleStatusToggle(formation.id, formation.status)}
+                        className="text-yellow-600 hover:text-yellow-800 text-sm font-medium"
+                      >
+                        {formation.status === 'active' ? 'Désactiver' : 'Activer'}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(formation.id)}
+                        className="text-red-600 hover:text-red-800 text-sm font-medium"
+                      >
+                        Supprimer
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -331,226 +245,121 @@ export function FormationsModule() {
         </div>
       </div>
 
-      {/* Add Formation Modal */}
-      {showAddFormation && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="glass-strong rounded-3xl p-8 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
-            <h3 className="text-2xl font-bold text-white mb-6">➕ Ajouter une Formation</h3>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+      {/* Add/Edit Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-lg font-semibold text-gray-900">
+                {editingFormation ? 'Modifier la formation' : 'Ajouter une formation'}
+              </h4>
+              <button 
+                onClick={() => {
+                  setShowAddModal(false);
+                  setEditingFormation(null);
+                  setFormData({ title: "", description: "", price: "", duration: "", level: "", category: "" });
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Titre</label>
                 <input
                   type="text"
-                  placeholder="Titre de la formation"
-                  value={newFormation.title}
-                  onChange={(e) => setNewFormation({...newFormation, title: e.target.value})}
-                  className="w-full rounded-xl glass-strong px-4 py-3 text-white placeholder:text-neutral-500"
-                />
-                <input
-                  type="text"
-                  placeholder="Catégorie"
-                  value={newFormation.category}
-                  onChange={(e) => setNewFormation({...newFormation, category: e.target.value})}
-                  className="w-full rounded-xl glass-strong px-4 py-3 text-white placeholder:text-neutral-500"
+                  required
+                  value={formData.title}
+                  onChange={(e) => setFormData({...formData, title: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-              <textarea
-                placeholder="Description"
-                value={newFormation.description}
-                onChange={(e) => setNewFormation({...newFormation, description: e.target.value})}
-                className="w-full rounded-xl glass-strong px-4 py-3 text-white placeholder:text-neutral-500 h-24"
-              />
-              <div className="grid grid-cols-3 gap-4">
-                <input
-                  type="number"
-                  placeholder="Prix (€)"
-                  value={newFormation.price}
-                  onChange={(e) => setNewFormation({...newFormation, price: parseInt(e.target.value) || 0})}
-                  className="w-full rounded-xl glass-strong px-4 py-3 text-white placeholder:text-neutral-500"
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea
+                  required
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <input
-                  type="text"
-                  placeholder="Durée (ex: 2h30)"
-                  value={newFormation.duration}
-                  onChange={(e) => setNewFormation({...newFormation, duration: e.target.value})}
-                  className="w-full rounded-xl glass-strong px-4 py-3 text-white placeholder:text-neutral-500"
-                />
-                <select
-                  value={newFormation.level}
-                  onChange={(e) => setNewFormation({...newFormation, level: e.target.value as Formation['level']})}
-                  className="w-full rounded-xl glass-strong px-4 py-3 text-white"
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Prix (€)</label>
+                  <input
+                    type="number"
+                    required
+                    min="0"
+                    step="0.01"
+                    value={formData.price}
+                    onChange={(e) => setFormData({...formData, price: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Durée</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.duration}
+                    onChange={(e) => setFormData({...formData, duration: e.target.value})}
+                    placeholder="ex: 8 semaines"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Niveau</label>
+                  <select
+                    required
+                    value={formData.level}
+                    onChange={(e) => setFormData({...formData, level: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Sélectionner...</option>
+                    <option value="Débutant">Débutant</option>
+                    <option value="Intermédiaire">Intermédiaire</option>
+                    <option value="Avancé">Avancé</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.category}
+                    onChange={(e) => setFormData({...formData, category: e.target.value})}
+                    placeholder="ex: Marketing Digital"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                 >
-                  <option value="beginner">🌱 Débutant</option>
-                  <option value="intermediate">🌿 Intermédiaire</option>
-                  <option value="advanced">🌳 Avancé</option>
-                </select>
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-white hover:bg-blue-700"
+                >
+                  {editingFormation ? 'Mettre à jour' : 'Ajouter'}
+                </button>
               </div>
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  id="is_published"
-                  checked={newFormation.is_published}
-                  onChange={(e) => setNewFormation({...newFormation, is_published: e.target.checked})}
-                  className="w-4 h-4 rounded"
-                />
-                <label htmlFor="is_published" className="text-white">Publier immédiatement</label>
-              </div>
-            </div>
-            <div className="flex gap-4 mt-6">
-              <button
-                onClick={addFormation}
-                className="btn-gradient flex-1 py-3 rounded-xl font-bold text-white"
-              >
-                ✅ Ajouter
-              </button>
-              <button
-                onClick={() => setShowAddFormation(false)}
-                className="glass-strong flex-1 py-3 rounded-xl font-bold text-white hover:bg-white/20"
-              >
-                ❌ Annuler
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Add Module Modal */}
-      {editingModule && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="glass-strong rounded-3xl p-8 max-w-md w-full mx-4">
-            <h3 className="text-2xl font-bold text-white mb-6">📖 Ajouter un Module</h3>
-            <div className="space-y-4">
-              <select
-                value={newModule.formation_id}
-                onChange={(e) => setNewModule({...newModule, formation_id: e.target.value})}
-                className="w-full rounded-xl glass-strong px-4 py-3 text-white"
-              >
-                <option value="">Sélectionner une formation</option>
-                {formations.map(formation => (
-                  <option key={formation.id} value={formation.id}>{formation.title}</option>
-                ))}
-              </select>
-              <input
-                type="text"
-                placeholder="Titre du module"
-                value={newModule.title}
-                onChange={(e) => setNewModule({...newModule, title: e.target.value})}
-                className="w-full rounded-xl glass-strong px-4 py-3 text-white placeholder:text-neutral-500"
-              />
-              <textarea
-                placeholder="Description"
-                value={newModule.description}
-                onChange={(e) => setNewModule({...newModule, description: e.target.value})}
-                className="w-full rounded-xl glass-strong px-4 py-3 text-white placeholder:text-neutral-500 h-24"
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="number"
-                  placeholder="Durée (minutes)"
-                  value={newModule.duration}
-                  onChange={(e) => setNewModule({...newModule, duration: parseInt(e.target.value) || 0})}
-                  className="w-full rounded-xl glass-strong px-4 py-3 text-white placeholder:text-neutral-500"
-                />
-                <input
-                  type="number"
-                  placeholder="Ordre"
-                  value={newModule.order}
-                  onChange={(e) => setNewModule({...newModule, order: parseInt(e.target.value) || 0})}
-                  className="w-full rounded-xl glass-strong px-4 py-3 text-white placeholder:text-neutral-500"
-                />
-              </div>
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  id="module_published"
-                  checked={newModule.is_published}
-                  onChange={(e) => setNewModule({...newModule, is_published: e.target.checked})}
-                  className="w-4 h-4 rounded"
-                />
-                <label htmlFor="module_published" className="text-white">Publier immédiatement</label>
-              </div>
-            </div>
-            <div className="flex gap-4 mt-6">
-              <button
-                onClick={addModule}
-                className="btn-gradient flex-1 py-3 rounded-xl font-bold text-white"
-              >
-                ✅ Ajouter
-              </button>
-              <button
-                onClick={() => setEditingModule(null)}
-                className="glass-strong flex-1 py-3 rounded-xl font-bold text-white hover:bg-white/20"
-              >
-                ❌ Annuler
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Formation Detail Modal */}
-      {selectedFormation && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="glass-strong rounded-3xl p-8 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
-            <h3 className="text-2xl font-bold text-white mb-6">📚 Détails de la Formation</h3>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm text-neutral-400">Titre</label>
-                  <div className="text-white font-semibold">{selectedFormation.title}</div>
-                </div>
-                <div>
-                  <label className="text-sm text-neutral-400">Catégorie</label>
-                  <div className="text-white">{selectedFormation.category}</div>
-                </div>
-                <div>
-                  <label className="text-sm text-neutral-400">Niveau</label>
-                  <div className={`inline-block px-3 py-1 rounded-lg text-sm font-bold ${getLevelColor(selectedFormation.level)}`}>
-                    {getLevelLabel(selectedFormation.level)}
-                  </div>
-                </div>
-                <div>
-                  <label className="text-sm text-neutral-400">Prix</label>
-                  <div className="text-lg font-bold text-[#8B5CF6]">{selectedFormation.price}€</div>
-                </div>
-                <div>
-                  <label className="text-sm text-neutral-400">Durée</label>
-                  <div className="text-white">{selectedFormation.duration}</div>
-                </div>
-                <div>
-                  <label className="text-sm text-neutral-400">Statut</label>
-                  <div className={`inline-block px-3 py-1 rounded-lg text-sm font-bold ${
-                    selectedFormation.is_published 
-                      ? 'bg-green-500/20 text-green-300' 
-                      : 'bg-gray-500/20 text-gray-300'
-                  }`}>
-                    {selectedFormation.is_published ? '✅ Publiée' : '📝 Brouillon'}
-                  </div>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm text-neutral-400">Description</label>
-                <div className="text-white bg-white/5 rounded-lg p-3">{selectedFormation.description}</div>
-              </div>
-              <div>
-                <label className="text-sm text-neutral-400">Modules associés</label>
-                <div className="space-y-2 mt-2">
-                  {modules.filter(m => m.formation_id === selectedFormation.id).map(module => (
-                    <div key={module.id} className="glass-strong rounded-lg p-3">
-                      <div className="font-semibold text-white">{module.title}</div>
-                      <div className="text-sm text-neutral-400">{module.duration}min - Ordre {module.order}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-4 mt-6">
-              <button
-                onClick={() => setSelectedFormation(null)}
-                className="btn-gradient flex-1 py-3 rounded-xl font-bold text-white"
-              >
-                ✅ Fermer
-              </button>
-            </div>
+            </form>
           </div>
         </div>
       )}
