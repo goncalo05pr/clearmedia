@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 interface ContactMessage {
   id: string;
@@ -20,73 +21,98 @@ export default function SupportModule() {
   const [filter, setFilter] = useState<'all' | 'new' | 'read' | 'replied'>('all');
 
   useEffect(() => {
-    // Simuler des données - en production, ça viendrait de Supabase
-    const loadMessages = async () => {
-      try {
-        const mockMessages: ContactMessage[] = [
-          {
-            id: "1",
-            name: "Sarah Martin",
-            email: "sarah.martin@email.com",
-            subject: "Problème d'accès à la formation Social Ads",
-            message: "Bonjour, je n'arrive pas à accéder à ma formation achetée hier. Pouvez-vous m'aider ?",
-            date: "2024-03-15T10:30:00Z",
-            status: "new",
-            priority: "high"
-          },
-          {
-            id: "2",
-            name: "Marc Dubois",
-            email: "marc.dubois@email.com",
-            subject: "Question sur le contenu du module 3",
-            message: "Bonjour, j'ai une question sur les techniques de copyclosing présentées dans le module 3. Pourriez-vous clarifier ?",
-            date: "2024-03-14T14:22:00Z",
-            status: "read",
-            priority: "medium"
-          },
-          {
-            id: "3",
-            name: "Julie Petit",
-            email: "julie.petit@email.com",
-            subject: "Remboursement formation Copy Closing",
-            message: "Bonjour, je souhaite me faire rembourser pour la formation Copy Closing que j'ai achetée il y a 2 jours.",
-            date: "2024-03-13T16:45:00Z",
-            status: "replied",
-            priority: "low"
-          }
-        ];
-
-        setMessages(mockMessages);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error loading messages:', error);
-        setLoading(false);
-      }
-    };
-
     loadMessages();
-  }, []);
+  }, [filter]);
 
-  const filteredMessages = messages.filter(message => {
-    if (filter === 'all') return true;
-    return message.status === filter;
-  });
-
-  const handleStatusChange = async (id: string, newStatus: ContactMessage['status']) => {
+  const loadMessages = async () => {
     try {
-      console.log('Updating message status:', id, newStatus);
-      // En production: await supabase.from('contact_messages').update({ status: newStatus }).eq('id', id);
-      setMessages(messages.map(m => 
-        m.id === id ? { ...m, status: newStatus } : m
-      ));
+      const supabase = createClient();
+      
+      // Récupérer les messages de support depuis Supabase
+      let query = supabase
+        .from('support_messages')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      // Appliquer le filtre si nécessaire
+      if (filter !== 'all') {
+        query = query.eq('status', filter);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error loading support messages:', error);
+      } else {
+        // Transformer les données brutes en format ContactMessage
+        const supportMessages: ContactMessage[] = (data || []).map((msg: any) => ({
+          id: msg.id,
+          name: msg.name || '',
+          email: msg.email || '',
+          subject: msg.subject || '',
+          message: msg.message || '',
+          date: msg.created_at || '',
+          status: msg.status || 'new',
+          priority: msg.priority || 'medium'
+        }));
+
+        setMessages(supportMessages);
+      }
+      
+      setLoading(false);
+    } catch (error) {
+      console.error('Error loading support messages:', error);
+      setLoading(false);
+    }
+  };
+
+  const handleStatusChange = async (messageId: string, newStatus: ContactMessage['status']) => {
+    try {
+      const supabase = createClient();
+      const { error } = await supabase
+        .from('support_messages')
+        .update({ 
+          status: newStatus,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', messageId);
+
+      if (error) {
+        console.error('Error updating message status:', error);
+      } else {
+        // Mettre à jour l'état local
+        setMessages(prev => 
+          prev.map(msg => 
+            msg.id === messageId ? { ...msg, status: newStatus } : msg
+          )
+        );
+      }
     } catch (error) {
       console.error('Error updating message status:', error);
     }
   };
 
-  const handleReply = async (message: ContactMessage) => {
-    setSelectedMessage(message);
-    await handleStatusChange(message.id, 'replied');
+  const handleDelete = async (messageId: string) => {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce message ?')) {
+      try {
+        const supabase = createClient();
+        const { error } = await supabase
+          .from('support_messages')
+          .delete()
+          .eq('id', messageId);
+
+        if (error) {
+          console.error('Error deleting message:', error);
+        } else {
+          setMessages(prev => prev.filter(msg => msg.id !== messageId));
+          if (selectedMessage?.id === messageId) {
+            setSelectedMessage(null);
+          }
+        }
+      } catch (error) {
+        console.error('Error deleting message:', error);
+      }
+    }
   };
 
   const getPriorityColor = (priority: string) => {
@@ -108,6 +134,8 @@ export default function SupportModule() {
     }
   };
 
+  const filteredMessages = filter === 'all' ? messages : messages.filter(msg => msg.status === filter);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -121,169 +149,143 @@ export default function SupportModule() {
       <h3 className="text-xl font-semibold text-white mb-4">🎧 Support Client</h3>
       
       {/* Filter Tabs */}
-      <div className="bg-white rounded-lg p-2 shadow-sm border border-gray-200 mb-6">
+      <div className="bg-white rounded-lg p-2 mb-6">
         <div className="flex space-x-2">
-          {(['all', 'new', 'read', 'replied'] as const).map((status) => (
+          {[
+            { id: 'all', label: 'Tous', count: messages.length },
+            { id: 'new', label: 'Nouveaux', count: messages.filter(m => m.status === 'new').length },
+            { id: 'read', label: 'Lus', count: messages.filter(m => m.status === 'read').length },
+            { id: 'replied', label: 'Répondus', count: messages.filter(m => m.status === 'replied').length }
+          ].map((tab) => (
             <button
-              key={status}
-              onClick={() => setFilter(status)}
+              key={tab.id}
+              onClick={() => setFilter(tab.id as any)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === status
+                filter === tab.id
                   ? 'bg-blue-600 text-white'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              {status === 'all' ? 'Tous' : 
-               status === 'new' ? 'Nouveaux' :
-               status === 'read' ? 'Lus' : 'Répondus'}
-              {status === 'new' && ` (${messages.filter(m => m.status === 'new').length})`}
+              {tab.label} ({tab.count})
             </button>
           ))}
         </div>
       </div>
 
-      {/* Messages List */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sujet</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priorité</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredMessages.map((message) => (
-                <tr key={message.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {new Date(message.date).toLocaleDateString('fr-FR')}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="font-medium text-gray-900">{message.name}</div>
-                    <div className="text-sm text-gray-600">{message.email}</div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">{message.subject}</td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(message.priority)}`}>
-                      {message.priority === 'high' ? 'Haute' : message.priority === 'medium' ? 'Moyenne' : 'Basse'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(message.status)}`}>
-                      {message.status === 'new' ? 'Nouveau' : 
-                       message.status === 'read' ? 'Lu' :
-                       message.status === 'replied' ? 'Répondu' : 'Archivé'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => setSelectedMessage(message)}
-                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                      >
-                        Voir
-                      </button>
-                      {message.status !== 'replied' && (
-                        <button
-                          onClick={() => handleReply(message)}
-                          className="text-green-600 hover:text-green-800 text-sm font-medium"
-                        >
-                          Répondre
-                        </button>
-                      )}
-                      <button
-                        onClick={() => handleStatusChange(message.id, 'archived')}
-                        className="text-gray-600 hover:text-gray-800 text-sm font-medium"
-                      >
-                        Archiver
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Message Detail Modal */}
-      {selectedMessage && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-3xl w-full mx-4 max-h-screen overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h4 className="text-lg font-semibold text-gray-900">Détails du message</h4>
-              <button 
-                onClick={() => setSelectedMessage(null)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                ✕
-              </button>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Messages List */}
+        <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="p-6 border-b border-gray-200">
+            <h4 className="text-lg font-semibold text-gray-900">Messages</h4>
+          </div>
+          
+          {filteredMessages.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-4xl mb-4">📧</div>
+              <p className="text-gray-500 text-lg">Aucune donnée pour l'instant</p>
+              <p className="text-gray-400 text-sm mt-2">
+                {filter === 'all' ? 'Aucun message de support' : `Aucun message ${filter}`}
+              </p>
             </div>
-            
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h5 className="font-medium text-gray-700 mb-1">Informations client</h5>
-                  <div className="space-y-2 text-sm">
-                    <div><span className="font-medium">Nom:</span> {selectedMessage.name}</div>
-                    <div><span className="font-medium">Email:</span> {selectedMessage.email}</div>
-                    <div><span className="font-medium">Date:</span> {new Date(selectedMessage.date).toLocaleString('fr-FR')}</div>
-                  </div>
-                </div>
-                
-                <div>
-                  <h5 className="font-medium text-gray-700 mb-1">Classification</h5>
-                  <div className="space-y-2 text-sm">
-                    <div>
-                      <span className="font-medium">Priorité:</span> 
-                      <span className={`ml-2 inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(selectedMessage.priority)}`}>
-                        {selectedMessage.priority === 'high' ? 'Haute' : selectedMessage.priority === 'medium' ? 'Moyenne' : 'Basse'}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="font-medium">Statut:</span> 
-                      <span className={`ml-2 inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedMessage.status)}`}>
-                        {selectedMessage.status === 'new' ? 'Nouveau' : 
-                         selectedMessage.status === 'read' ? 'Lu' :
-                         selectedMessage.status === 'replied' ? 'Répondu' : 'Archivé'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <h5 className="font-medium text-gray-700 mb-2">Message</h5>
-                <div className="bg-gray-50 p-4 rounded-lg text-sm text-gray-700">
-                  <div className="font-medium mb-2">Sujet: {selectedMessage.subject}</div>
-                  <div className="whitespace-pre-wrap">{selectedMessage.message}</div>
-                </div>
-              </div>
-              
-              <div className="flex justify-end space-x-3 pt-4">
-                <button
-                  onClick={() => setSelectedMessage(null)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+          ) : (
+            <div className="max-h-96 overflow-y-auto">
+              {filteredMessages.map((message) => (
+                <div
+                  key={message.id}
+                  onClick={() => setSelectedMessage(message)}
+                  className={`p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors ${
+                    selectedMessage?.id === message.id ? 'bg-blue-50' : ''
+                  }`}
                 >
-                  Fermer
-                </button>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(message.priority)}`}>
+                          {message.priority === 'high' ? 'Urgent' : 
+                           message.priority === 'medium' ? 'Moyen' : 'Faible'}
+                        </span>
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(message.status)}`}>
+                          {message.status === 'new' ? 'Nouveau' : 
+                           message.status === 'read' ? 'Lu' : 
+                           message.status === 'replied' ? 'Répondu' : 'Archivé'}
+                        </span>
+                      </div>
+                      <div className="font-medium text-gray-900">{message.subject}</div>
+                      <div className="text-sm text-gray-600">{message.name} - {message.email}</div>
+                      <div className="text-xs text-gray-500">
+                        {new Date(message.date).toLocaleDateString('fr-FR', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Message Detail */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="p-6 border-b border-gray-200">
+            <h4 className="text-lg font-semibold text-gray-900">Détails du message</h4>
+          </div>
+          
+          {selectedMessage ? (
+            <div className="p-6">
+              <div className="mb-4">
+                <div className="font-medium text-gray-900 mb-2">De: {selectedMessage.name}</div>
+                <div className="text-sm text-gray-600 mb-2">Email: {selectedMessage.email}</div>
+                <div className="text-sm text-gray-600 mb-2">Date: {new Date(selectedMessage.date).toLocaleString('fr-FR')}</div>
+              </div>
+              
+              <div className="mb-4">
+                <div className="font-medium text-gray-900 mb-2">Sujet: {selectedMessage.subject}</div>
+                <div className="text-sm text-gray-700 leading-relaxed p-4 bg-gray-50 rounded-lg">
+                  {selectedMessage.message}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex space-x-2">
                 {selectedMessage.status !== 'replied' && (
                   <button
-                    onClick={() => handleReply(selectedMessage)}
-                    className="px-4 py-2 bg-green-600 border border-transparent rounded-lg font-medium text-white hover:bg-green-700"
+                    onClick={() => handleStatusChange(selectedMessage.id, 'replied')}
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium text-sm"
                   >
-                    Répondre
+                    Marquer comme répondu
                   </button>
                 )}
+                
+                {selectedMessage.status !== 'archived' && (
+                  <button
+                    onClick={() => handleStatusChange(selectedMessage.id, 'archived')}
+                    className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium text-sm"
+                  >
+                    Archiver
+                  </button>
+                )}
+                
+                <button
+                  onClick={() => handleDelete(selectedMessage.id)}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium text-sm"
+                >
+                  Supprimer
+                </button>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="p-6 text-center">
+              <div className="text-4xl mb-4">📧</div>
+              <p className="text-gray-500">Sélectionnez un message pour voir les détails</p>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
