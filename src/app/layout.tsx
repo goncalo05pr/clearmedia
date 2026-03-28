@@ -16,8 +16,8 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "KLIQZ",
-  description: "Agence KLIQZ — Marketing et acquisitions",
+  title: "KLIQZ - Performance Marketing Agency",
+  description: "KLIQZ transforme votre trafic en revenus automatiques. Stratégies data-driven, media buying expert et ROI garanti pour votre croissance.",
 };
 
 export default function RootLayout({
@@ -30,9 +30,9 @@ export default function RootLayout({
       lang="fr"
       className={`${syne.variable} ${dmSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col text-[#F8FAFC]">
+      <body className="min-h-full flex flex-col text-[#F8FAFC] bg-black">
         <SiteHeader />
-        <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-12 sm:px-6 sm:py-16">
+        <main className="flex-1">
           {children}
         </main>
       </body>
