@@ -102,9 +102,12 @@ export default function ServicesSection() {
 
                 {/* CTA */}
                 <div className="mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <button className="text-[#ff4d2e] font-semibold text-sm hover:text-[#ff6b3d] transition-colors duration-300">
+                  <a
+                    href="/formations"
+                    className="text-[#ff4d2e] font-semibold text-sm hover:text-[#ff6b3d] transition-colors duration-300"
+                  >
                     En savoir plus →
-                  </button>
+                  </a>
                 </div>
               </div>
 
