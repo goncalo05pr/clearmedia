@@ -1,0 +1,267 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { HomepageContent } from "@/lib/cms-types";
+import { calculateHomepageStats, getHomepageContent } from "@/lib/cms-utils";
+
+interface StatsData {
+  satisfactionRate: number;
+  averageRoi: number;
+  clientsCount: number;
+  support: string;
+}
+
+export default function CMSEnabledHomepage() {
+  const [content, setContent] = useState<HomepageContent | null>(null);
+  const [stats, setStats] = useState<StatsData>({
+    satisfactionRate: 98,
+    averageRoi: 320,
+    clientsCount: 247,
+    support: "24/7"
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadContent();
+  }, []);
+
+  const loadContent = async () => {
+    try {
+      const [homepageContent, statsData] = await Promise.all([
+        getHomepageContent(),
+        calculateHomepageStats()
+      ]);
+
+      if (homepageContent) {
+        setContent(homepageContent);
+      } else {
+        // Fallback content if CMS not configured
+        setContent({
+          id: 'default',
+          heroTitle: "Votre trafic devient revenu automatique",
+          heroSubtitle: "KLIQZ transforme vos visiteurs en clients payants",
+          heroDescription: "Stratégies data-driven • Media buying expert • ROI garanti",
+          stats: statsData,
+          services: {
+            seo: {
+              title: "SEO Optimisation",
+              description: "Positionnement premium sur Google avec des stratégies techniques avancées",
+              features: ["SEO technique", "Content marketing", "Link building", "Local SEO"]
+            },
+            ads: {
+              title: "Paid Ads",
+              description: "Campagnes performantes sur Meta, TikTok, LinkedIn avec optimisation continue",
+              features: ["Meta Ads", "TikTok Ads", "Google Ads", "Retargeting"]
+            },
+            socialMedia: {
+              title: "Social Media",
+              description: "Gestion complète des réseaux sociaux avec création de contenu engageant",
+              features: ["Stratégie contenu", "Community management", "Influence marketing", "Social ads"]
+            },
+            content: {
+              title: "Content Creation",
+              description: "Contenu percutant qui convertit vos visiteurs en clients",
+              features: ["Copywriting", "Video creation", "Blog posts", "Email marketing"]
+            },
+            analytics: {
+              title: "Analytics",
+              description: "Suivi performance en temps réel et optimisation basée sur les données",
+              features: ["Dashboard custom", "A/B testing", "Conversion tracking", "ROI analysis"]
+            },
+            branding: {
+              title: "Branding",
+              description: "Identité visuelle forte qui vous démarque de la concurrence",
+              features: ["Logo design", "Brand strategy", "Visual identity", "Brand guidelines"]
+            }
+          },
+          testimonials: [
+            {
+              id: "1",
+              name: "Sarah L.",
+              company: "E-commerce B2B",
+              role: "CEO & Founder",
+              content: "KLIQZ a complètement transformé notre acquisition client. En 6 mois, nous avons multiplié notre ROI par 3.2.",
+              result: "+320% ROI",
+              metrics: { roi: "+320%", revenue: "+320%", scale: "x3.2" },
+              avatar: "👩‍💼"
+            },
+            {
+              id: "2",
+              name: "Marc D.",
+              company: "SaaS Scale-up",
+              role: "Head of Growth",
+              content: "Leur expertise en media buying nous a permis de passer de 50k€ à 500k€ de revenus mensuels en moins d'un an.",
+              result: "+900% Croissance",
+              metrics: { roi: "+850%", revenue: "+900%", scale: "x10" },
+              avatar: "👨‍💻"
+            }
+          ],
+          lastUpdated: new Date().toISOString()
+        });
+      }
+
+      setStats(statsData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error loading content:', error);
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="animate-spin w-12 h-12 border-4 border-[#ff4d2e] border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
+
+  if (!content) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">📝</div>
+          <h1 className="text-2xl font-bold text-white mb-2">CMS en cours de configuration</h1>
+          <p className="text-gray-400">Le contenu sera bientôt disponible</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      {/* Hero Section */}
+      <section className="relative py-20 px-4 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#ff4d2e]/20 to-transparent"></div>
+        <div className="relative max-w-7xl mx-auto text-center">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-[#ff4d2e] bg-clip-text text-transparent">
+            {content.heroTitle}
+          </h1>
+          <h2 className="text-2xl md:text-3xl text-[#ff4d2e] mb-4">
+            {content.heroSubtitle}
+          </h2>
+          <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+            {content.heroDescription}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="bg-[#ff4d2e] hover:bg-[#ff6b3d] text-white px-8 py-4 rounded-full font-semibold text-lg transition-all hover:scale-105 hover:shadow-2xl">
+              Commencer maintenant
+            </button>
+            <button className="border-2 border-white/20 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all hover:bg-white/10 hover:scale-105">
+              Voir les résultats
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 px-4 bg-gradient-to-b from-black to-[#0a0a0a]">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
+              <div className="text-4xl font-bold text-[#ff4d2e] mb-2">{stats.satisfactionRate}%</div>
+              <div className="text-gray-300">Taux de satisfaction</div>
+            </div>
+            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
+              <div className="text-4xl font-bold text-[#ff4d2e] mb-2">{stats.averageRoi}%</div>
+              <div className="text-gray-300">ROI moyen</div>
+            </div>
+            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
+              <div className="text-4xl font-bold text-[#ff4d2e] mb-2">{stats.clientsCount}+</div>
+              <div className="text-gray-300">Clients satisfaits</div>
+            </div>
+            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
+              <div className="text-4xl font-bold text-[#ff4d2e] mb-2">{stats.support}</div>
+              <div className="text-gray-300">Support disponible</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section className="py-20 px-4 bg-[#0a0a0a]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Nos Services</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Des solutions complètes pour transformer votre présence en ligne en machine à revenus
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Object.entries(content.services).map(([key, service]) => (
+              <div key={key} className="group bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 hover:border-[#ff4d2e]/50 transition-all duration-300 hover:scale-105">
+                <div className="text-4xl mb-4">
+                  {key === 'seo' && '🔍'}
+                  {key === 'ads' && '📱'}
+                  {key === 'socialMedia' && '📱'}
+                  {key === 'content' && '✍️'}
+                  {key === 'analytics' && '📊'}
+                  {key === 'branding' && '🎨'}
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">{service.title}</h3>
+                <p className="text-gray-300 mb-6">{service.description}</p>
+                <ul className="space-y-2">
+                  {service.features.map((feature, index) => (
+                    <li key={index} className="flex items-center text-gray-300">
+                      <span className="text-[#ff4d2e] mr-2">✓</span>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 px-4 bg-gradient-to-b from-[#0a0a0a] to-black">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Témoignages Clients</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Découvrez comment nous avons transformé des entreprises comme la vôtre
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {content.testimonials.map((testimonial) => (
+              <div key={testimonial.id} className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
+                <div className="flex items-center mb-6">
+                  <div className="text-4xl mr-4">{testimonial.avatar}</div>
+                  <div>
+                    <div className="font-bold text-white">{testimonial.name}</div>
+                    <div className="text-gray-300">{testimonial.role}</div>
+                    <div className="text-[#ff4d2e]">{testimonial.company}</div>
+                  </div>
+                </div>
+                <blockquote className="text-gray-300 mb-6 italic">
+                  "{testimonial.content}"
+                </blockquote>
+                <div className="text-2xl font-bold text-[#ff4d2e]">
+                  {testimonial.result}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-4 bg-black">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Prêt à transformer votre trafic en revenus ?
+          </h2>
+          <p className="text-xl text-gray-300 mb-8">
+            Rejoignez les centaines d'entreprises qui font déjà confiance à KLIQZ
+          </p>
+          <button className="bg-[#ff4d2e] hover:bg-[#ff6b3d] text-white px-8 py-4 rounded-full font-semibold text-lg transition-all hover:scale-105 hover:shadow-2xl">
+            Démarrer votre projet
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}

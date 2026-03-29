@@ -15,6 +15,7 @@ import AutomationModule from "@/components/admin/automation-module";
 import EmployeesModule from "@/components/admin/employees-module";
 import InvoicingModule from "@/components/admin/invoicing-module";
 import FormationModulesManager from "@/components/admin/formation-modules-manager";
+import CMSModule from "@/components/admin/cms-module";
 
 export default function AdminDashboard() {
   const [activeModule, setActiveModule] = useState('dashboard');
@@ -44,6 +45,7 @@ export default function AdminDashboard() {
 
   const modules = [
     { id: 'dashboard', name: 'Tableau de Bord', icon: '📊', component: DashboardModule },
+    { id: 'cms', name: 'CMS', icon: '📝', component: CMSModule },
     { id: 'crm', name: 'CRM', icon: '🤝', component: CRMModule },
     { id: 'formations', name: 'Formations', icon: '📚', component: FormationsModule },
     { id: 'formation-modules', name: 'Modules Formation', icon: '📝', component: FormationModulesManager },
