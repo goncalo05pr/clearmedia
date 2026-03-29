@@ -167,3 +167,45 @@
 .form-textarea-gray::placeholder {
   color: #999999 !important;
 }
+
+/* GLOBAL ADMIN FORM STYLES - FORCE TEXT COLOR AND BACKGROUND */
+/* Appliqué à TOUS les inputs, textareas et selects dans l'admin */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+input[type="tel"],
+textarea,
+select {
+  color: #111111 !important;
+  background-color: #ffffff !important;
+}
+
+input[type="text"]::placeholder,
+input[type="number"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="url"]::placeholder,
+input[type="tel"]::placeholder,
+textarea::placeholder {
+  color: #999999 !important;
+}
+
+select option {
+  color: #111111 !important;
+  background-color: #ffffff !important;
+}
+
+/* Force les styles pour l'espace admin */
+.admin-dashboard input,
+.admin-dashboard textarea,
+.admin-dashboard select {
+  color: #111111 !important;
+  background-color: #ffffff !important;
+}
+
+.admin-dashboard input::placeholder,
+.admin-dashboard textarea::placeholder {
+  color: #999999 !important;
+}
