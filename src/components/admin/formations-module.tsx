@@ -585,7 +585,7 @@ export default function FormationsModule() {
                   <select
                     value={formData.formationType}
                     onChange={(e) => setFormData({...formData, formationType: e.target.value as any})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                   >
                     <option value="videos">Vidéos</option>
                     <option value="pdf">PDF</option>

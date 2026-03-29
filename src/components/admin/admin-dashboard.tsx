@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import DashboardModule from "@/components/admin/dashboard-module";
 import CRMModule from "@/components/admin/crm-module";
 import FormationsModule from "@/components/admin/formations-module";
+import FormationModulesManager from "@/components/admin/formation-modules-manager";
 import AccountingModule from "@/components/admin/accounting-module";
 import HRModule from "@/components/admin/hr-module";
 import MarketingModule from "@/components/admin/marketing-module";
@@ -14,7 +16,6 @@ import CalendarModule from "@/components/admin/calendar-module";
 import AutomationModule from "@/components/admin/automation-module";
 import EmployeesModule from "@/components/admin/employees-module";
 import InvoicingModule from "@/components/admin/invoicing-module";
-import FormationModulesManager from "@/components/admin/formation-modules-manager";
 import CMSModule from "@/components/admin/cms-module";
 
 export default function AdminDashboard() {
@@ -127,33 +128,38 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
-        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+        {/* Header */}
+        <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                {modules.find(m => m.id === activeModule)?.name}
-              </h1>
-              <p className="text-sm text-gray-600">
-                Gestion de la plateforme KLIQZ
-              </p>
-            </div>
-            
+            <h1 className="text-2xl font-semibold text-gray-900">
+              {modules.find(m => m.id === activeModule)?.name || 'Tableau de Bord'}
+            </h1>
             <div className="flex items-center space-x-4">
-              <button className="text-gray-600 hover:text-gray-900">
-                🔔
+              {/* Notifications */}
+              <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
               </button>
-              <button className="text-gray-600 hover:text-gray-900">
-                👤
-              </button>
+              
+              {/* Profile */}
+              <Link 
+                href="/profil"
+                className="flex items-center space-x-3 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                  {user.email?.charAt(0).toUpperCase()}
+                </div>
+                <span className="text-sm font-medium">{user.email?.split('@')[0]}</span>
+              </Link>
             </div>
           </div>
-        </header>
+        </div>
         
-        <main className="p-6">
-          <div className="max-w-7xl mx-auto">
-            <ActiveComponent />
-          </div>
-        </main>
+        <div className="p-6">
+          <ActiveComponent />
+        </div>
       </div>
     </div>
   );
