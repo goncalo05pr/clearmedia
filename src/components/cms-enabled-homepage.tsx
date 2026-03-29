@@ -2,23 +2,40 @@
 
 import { useState, useEffect } from "react";
 import { HomepageContent } from "@/lib/cms-types";
-import { calculateHomepageStats, getHomepageContent } from "@/lib/cms-utils";
+import { calculateHomepageStats, getHomepageContent, getReviewsForHomepage } from "@/lib/cms-utils";
+import ReviewForm from "@/components/review-form";
 
 interface StatsData {
+  formationsSold: number;
   satisfactionRate: number;
   averageRoi: number;
   clientsCount: number;
   support: string;
 }
 
+interface Review {
+  id: string;
+  rating: number;
+  comment?: string;
+  user?: {
+    email: string;
+  };
+  formation?: {
+    title: string;
+  };
+  created_at: string;
+}
+
 export default function CMSEnabledHomepage() {
   const [content, setContent] = useState<HomepageContent | null>(null);
   const [stats, setStats] = useState<StatsData>({
+    formationsSold: 0,
     satisfactionRate: 98,
     averageRoi: 320,
     clientsCount: 247,
     support: "24/7"
   });
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,9 +44,10 @@ export default function CMSEnabledHomepage() {
 
   const loadContent = async () => {
     try {
-      const [homepageContent, statsData] = await Promise.all([
+      const [homepageContent, statsData, reviewsData] = await Promise.all([
         getHomepageContent(),
-        calculateHomepageStats()
+        calculateHomepageStats(),
+        getReviewsForHomepage()
       ]);
 
       if (homepageContent) {
@@ -101,11 +119,81 @@ export default function CMSEnabledHomepage() {
       }
 
       setStats(statsData);
+      setReviews(reviewsData);
       setLoading(false);
     } catch (error) {
       console.error('Error loading content:', error);
       setLoading(false);
     }
+  };
+
+  const renderStars = (rating: number) => {
+    return (
+      <div className="flex space-x-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span
+            key={star}
+            className={`text-lg ${star <= rating ? "text-yellow-400" : "text-gray-300"}`}
+          >
+            ★
+          </span>
+        ))}
+      </div>
+    );
+  };
+
+  const renderTestimonial = (testimonial: any, isReview: boolean = false) => {
+    if (isReview) {
+      return (
+        <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
+          <div className="flex items-center mb-6">
+            <div className="text-4xl mr-4">👤</div>
+            <div>
+              <div className="font-bold text-white">
+                {testimonial.user?.email?.split('@')[0] || 'Anonymous'}
+              </div>
+              <div className="text-gray-300 text-sm">
+                Formation: {testimonial.formation?.title || 'Formation'}
+              </div>
+            </div>
+          </div>
+          
+          <div className="mb-4">
+            {renderStars(testimonial.rating)}
+          </div>
+          
+          {testimonial.comment && (
+            <blockquote className="text-gray-300 mb-6 italic">
+              "{testimonial.comment}"
+            </blockquote>
+          )}
+          
+          <div className="text-sm text-gray-400">
+            {new Date(testimonial.created_at).toLocaleDateString('fr-FR')}
+          </div>
+        </div>
+      );
+    }
+
+    // Original testimonial rendering
+    return (
+      <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
+        <div className="flex items-center mb-6">
+          <div className="text-4xl mr-4">{testimonial.avatar}</div>
+          <div>
+            <div className="font-bold text-white">{testimonial.name}</div>
+            <div className="text-gray-300">{testimonial.role}</div>
+            <div className="text-[#ff4d2e]">{testimonial.company}</div>
+          </div>
+        </div>
+        <blockquote className="text-gray-300 mb-6 italic">
+          "{testimonial.content}"
+        </blockquote>
+        <div className="text-2xl font-bold text-[#ff4d2e]">
+          {testimonial.result}
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
@@ -159,12 +247,12 @@ export default function CMSEnabledHomepage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-              <div className="text-4xl font-bold text-[#ff4d2e] mb-2">{stats.satisfactionRate}%</div>
-              <div className="text-gray-300">Taux de satisfaction</div>
+              <div className="text-4xl font-bold text-[#ff4d2e] mb-2">{stats.formationsSold}</div>
+              <div className="text-gray-300">Formations vendues</div>
             </div>
             <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-              <div className="text-4xl font-bold text-[#ff4d2e] mb-2">{stats.averageRoi}%</div>
-              <div className="text-gray-300">ROI moyen</div>
+              <div className="text-4xl font-bold text-[#ff4d2e] mb-2">{stats.satisfactionRate}%</div>
+              <div className="text-gray-300">Taux de satisfaction</div>
             </div>
             <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
               <div className="text-4xl font-bold text-[#ff4d2e] mb-2">{stats.clientsCount}+</div>
@@ -219,29 +307,22 @@ export default function CMSEnabledHomepage() {
       <section className="py-20 px-4 bg-gradient-to-b from-[#0a0a0a] to-black">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Témoignages Clients</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Avis des Étudiants</h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Découvrez comment nous avons transformé des entreprises comme la vôtre
+              Découvrez ce que nos étudiants disent de nos formations
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {content.testimonials.map((testimonial) => (
-              <div key={testimonial.id} className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-                <div className="flex items-center mb-6">
-                  <div className="text-4xl mr-4">{testimonial.avatar}</div>
-                  <div>
-                    <div className="font-bold text-white">{testimonial.name}</div>
-                    <div className="text-gray-300">{testimonial.role}</div>
-                    <div className="text-[#ff4d2e]">{testimonial.company}</div>
-                  </div>
-                </div>
-                <blockquote className="text-gray-300 mb-6 italic">
-                  "{testimonial.content}"
-                </blockquote>
-                <div className="text-2xl font-bold text-[#ff4d2e]">
-                  {testimonial.result}
-                </div>
+            {/* Mix of CMS testimonials and real reviews */}
+            {content.testimonials.slice(0, 1).map((testimonial, index) => (
+              <div key={`cms-${index}`}>
+                {renderTestimonial(testimonial, false)}
+              </div>
+            ))}
+            {reviews.slice(0, 1).map((review, index) => (
+              <div key={`review-${index}`}>
+                {renderTestimonial(review, true)}
               </div>
             ))}
           </div>
@@ -255,7 +336,7 @@ export default function CMSEnabledHomepage() {
             Prêt à transformer votre trafic en revenus ?
           </h2>
           <p className="text-xl text-gray-300 mb-8">
-            Rejoignez les centaines d'entreprises qui font déjà confiance à KLIQZ
+            Rejoignez les centaines d'étudiants qui font déjà confiance à KLIQZ
           </p>
           <button className="bg-[#ff4d2e] hover:bg-[#ff6b3d] text-white px-8 py-4 rounded-full font-semibold text-lg transition-all hover:scale-105 hover:shadow-2xl">
             Démarrer votre projet

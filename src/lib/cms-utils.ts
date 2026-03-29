@@ -4,46 +4,45 @@ export async function calculateHomepageStats() {
   const supabase = createClient();
   
   try {
+    let formationsSold = 0;
     let satisfactionRate = 98;
-    let averageRoi = 320;
 
-    // Calculate satisfaction rate from support messages
-    const { data: supportData, error: supportError } = await supabase
-      .from('support_messages')
-      .select('status');
+    // Calculer le nombre de formations vendues
+    const { count: salesCount, error: salesError } = await supabase
+      .from('user_purchases')
+      .select('*', { count: 'exact', head: true });
 
-    if (!supportError && supportData) {
-      const totalMessages = supportData.length;
-      const completedMessages = supportData.filter((msg: any) => msg.status === 'replied').length;
-      satisfactionRate = totalMessages > 0 ? Math.round((completedMessages / totalMessages) * 100) : 98;
+    if (!salesError && salesCount !== null) {
+      formationsSold = salesCount;
     }
 
-    // Calculate average ROI from client data
-    const { data: clientData, error: clientError } = await supabase
-      .from('clients')
-      .select('roi');
+    // Calculer le taux de satisfaction depuis les avis
+    const { data: reviewsData, error: reviewsError } = await supabase
+      .from('reviews')
+      .select('rating');
 
-    if (!clientError && clientData) {
-      const validRois = clientData.filter((client: any) => client.roi && !isNaN(client.roi));
-      averageRoi = validRois.length > 0 
-        ? Math.round(validRois.reduce((sum: number, client: any) => sum + client.roi, 0) / validRois.length)
-        : 320;
+    if (!reviewsError && reviewsData && reviewsData.length > 0) {
+      const totalReviews = reviewsData.length;
+      const positiveReviews = reviewsData.filter(review => review.rating >= 4).length;
+      satisfactionRate = Math.round((positiveReviews / totalReviews) * 100);
     }
 
-    // Get total clients count
+    // Récupérer le nombre total de clients
     const { count: clientsCount, error: clientsError } = await supabase
-      .from('clients')
+      .from('profiles')
       .select('*', { count: 'exact', head: true });
 
     return {
+      formationsSold,
       satisfactionRate,
-      averageRoi,
+      averageRoi: 320,
       clientsCount: clientsCount || 247,
       support: "24/7"
     };
   } catch (error) {
     console.error('Error calculating homepage stats:', error);
     return {
+      formationsSold: 0,
       satisfactionRate: 98,
       averageRoi: 320,
       clientsCount: 247,
@@ -71,5 +70,44 @@ export async function getHomepageContent() {
   } catch (error) {
     console.error('Error fetching homepage content:', error);
     return null;
+  }
+}
+
+export async function getReviewsForHomepage() {
+  const supabase = createClient();
+  
+  try {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('*')
+      .eq('is_public', true)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (error) {
+      console.error('Error fetching reviews:', error);
+      return [];
+    }
+
+    // Get user and formation info separately
+    const reviewsWithDetails = await Promise.all(
+      (data || []).map(async (review) => {
+        const [{ data: userData }, { data: formationData }] = await Promise.all([
+          supabase.from('auth.users').select('email').eq('id', review.user_id).single(),
+          supabase.from('formations').select('title').eq('id', review.formation_id).single()
+        ]);
+
+        return {
+          ...review,
+          user: userData ? { email: userData.email } : { email: 'Anonymous' },
+          formation: formationData ? { title: formationData.title } : { title: 'Formation' }
+        };
+      })
+    );
+
+    return reviewsWithDetails;
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    return [];
   }
 }
