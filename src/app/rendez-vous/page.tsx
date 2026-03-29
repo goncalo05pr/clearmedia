@@ -28,11 +28,17 @@ export default function RendezVousPage() {
           >
             KLIQZ
           </h1>
-          <p className="text-xl text-gray-300 mb-4">
-            Prenez rendez-vous avec notre équipe
+          <h2 
+            className="text-3xl md:text-4xl font-bold mb-4"
+            style={{ color: "#ff4d2e" }}
+          >
+            Prenez rendez-vous
+          </h2>
+          <p className="text-xl text-white mb-4">
+            Réservez un appel stratégique gratuit de 30 minutes
           </p>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            Réservez un créneau pour discuter de vos besoins et découvrir comment nos formations peuvent vous aider à atteindre vos objectifs.
+            Discutez de vos projets avec nos experts et découvrez comment nos formations peuvent vous aider à atteindre vos objectifs professionnels.
           </p>
         </div>
 
@@ -40,7 +46,7 @@ export default function RendezVousPage() {
         <div className="max-w-4xl mx-auto">
           <div 
             className="calendly-inline-widget"
-            data-url="https://calendly.com/kliqz"
+            data-url="https://calendly.com/kliqz?hide_event_type_details=1&hide_gdpr_banner=1"
             style={{ 
               minWidth: "320px", 
               height: "700px",
