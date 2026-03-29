@@ -48,7 +48,7 @@ export default function ProfilePage() {
           name: profileData?.full_name || user.user_metadata?.name || "",
           email: user.email || "",
           phone: profileData?.phone || "",
-          birthDate: profileData?.birthdate || "",
+          birthDate: profileData?.birthdate ? new Date(profileData.birthdate).toISOString().split('T')[0] : "",
           bio: profileData?.bio || "",
           newPassword: "",
           confirmPassword: ""
@@ -137,10 +137,10 @@ export default function ProfilePage() {
         .from('profiles')
         .upsert({
           user_id: user.id,
-          full_name: formData.name,
-          phone: formData.phone,
-          birthdate: formData.birthDate,
-          bio: formData.bio,
+          full_name: formData.name || null,
+          phone: formData.phone || null,
+          birthdate: formData.birthDate || null,
+          bio: formData.bio || null,
           avatar_url: avatarUrl,
           updated_at: new Date().toISOString()
         });
