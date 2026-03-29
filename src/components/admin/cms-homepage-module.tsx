@@ -20,8 +20,9 @@ export default function CMSHomepageModule() {
       
       // Load homepage content from Supabase
       const { data, error } = await supabase
-        .from('cms_homepage')
+        .from('cms_content')
         .select('*')
+        .eq('id', 'homepage')
         .single();
 
       if (error) {
@@ -96,9 +97,9 @@ export default function CMSHomepageModule() {
 
         // Create default content in Supabase
         const { error: insertError } = await supabase
-          .from('cms_homepage')
+          .from('cms_content')
           .insert({
-            id: 'default',
+            id: 'homepage',
             content: defaultContent,
             updated_at: new Date().toISOString()
           });
@@ -127,12 +128,12 @@ export default function CMSHomepageModule() {
       const supabase = createClient();
       
       const { error } = await supabase
-        .from('cms_homepage')
+        .from('cms_content')
         .update({
           content: content,
           updated_at: new Date().toISOString()
         })
-        .eq('id', content.id);
+        .eq('id', 'homepage');
 
       if (error) {
         console.error('Error saving content:', error);

@@ -57,8 +57,9 @@ export async function getHomepageContent() {
   
   try {
     const { data, error } = await supabase
-      .from('cms_homepage')
+      .from('cms_content')
       .select('*')
+      .eq('id', 'homepage')
       .single();
 
     if (error) {
