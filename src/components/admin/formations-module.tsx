@@ -514,7 +514,7 @@ export default function FormationsModule() {
                     required
                     value={formData.title}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-input-dark"
                     placeholder="Titre de la formation"
                   />
                 </div>
@@ -528,7 +528,7 @@ export default function FormationsModule() {
                     step="0.01"
                     value={formData.price}
                     onChange={(e) => setFormData({...formData, price: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-input-dark"
                     placeholder="99.99"
                   />
                 </div>
@@ -541,7 +541,7 @@ export default function FormationsModule() {
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-input-dark"
                   placeholder="Description détaillée de la formation"
                 />
               </div>
@@ -585,7 +585,7 @@ export default function FormationsModule() {
                   <select
                     value={formData.formationType}
                     onChange={(e) => setFormData({...formData, formationType: e.target.value as any})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-input-dark"
                   >
                     <option value="videos">Vidéos</option>
                     <option value="pdf">PDF</option>
@@ -600,7 +600,7 @@ export default function FormationsModule() {
                   <select
                     value={formData.level}
                     onChange={(e) => setFormData({...formData, level: e.target.value as any})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-input-dark"
                   >
                     <option value="beginner">Débutant</option>
                     <option value="intermediate">Intermédiaire</option>
@@ -616,7 +616,7 @@ export default function FormationsModule() {
                     min="1"
                     value={formData.duration}
                     onChange={(e) => setFormData({...formData, duration: parseInt(e.target.value)})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-input-dark"
                     placeholder="10"
                   />
                 </div>
@@ -659,7 +659,7 @@ export default function FormationsModule() {
                             required
                             value={module.title}
                             onChange={(e) => updateModule(index, 'title', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-input-dark"
                             placeholder="Titre du module"
                           />
                         </div>
@@ -669,7 +669,7 @@ export default function FormationsModule() {
                           <select
                             value={module.type}
                             onChange={(e) => updateModule(index, 'type', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-input-dark"
                           >
                             <option value="video">Vidéo (YouTube/Vimeo)</option>
                             <option value="pdf">PDF</option>
@@ -685,7 +685,7 @@ export default function FormationsModule() {
                             required
                             value={module.content}
                             onChange={(e) => updateModule(index, 'content', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-input-dark"
                             placeholder={
                               module.type === 'video' ? 'URL YouTube/Vimeo' :
                               module.type === 'pdf' ? 'URL du PDF' :

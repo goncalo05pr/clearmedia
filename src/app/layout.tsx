@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, Syne } from "next/font/google";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
+import "../styles/admin-forms.css";
 
 const syne = Syne({
   variable: "--font-heading-family",
