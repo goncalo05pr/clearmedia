@@ -261,7 +261,7 @@ export default function CMSHomepageModule() {
                   type="text"
                   value={content.heroTitle}
                   onChange={(e) => updateContent('heroTitle', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-textarea-light"
                 />
               </div>
 
@@ -271,7 +271,7 @@ export default function CMSHomepageModule() {
                   type="text"
                   value={content.heroSubtitle}
                   onChange={(e) => updateContent('heroSubtitle', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-textarea-light"
                 />
               </div>
 
@@ -281,7 +281,7 @@ export default function CMSHomepageModule() {
                   value={content.heroDescription}
                   onChange={(e) => updateContent('heroDescription', e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-textarea-light"
                 />
               </div>
             </div>
@@ -299,7 +299,7 @@ export default function CMSHomepageModule() {
                     max="100"
                     value={content.stats.satisfactionRate}
                     onChange={(e) => updateContent('stats.satisfactionRate', parseInt(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-textarea-light"
                   />
                   <p className="text-xs text-gray-500 mt-1">Cette valeur sera calculée automatiquement depuis les vraies données</p>
                 </div>
@@ -311,7 +311,7 @@ export default function CMSHomepageModule() {
                     min="0"
                     value={content.stats.averageRoi}
                     onChange={(e) => updateContent('stats.averageRoi', parseInt(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-textarea-light"
                   />
                   <p className="text-xs text-gray-500 mt-1">Cette valeur sera calculée automatiquement depuis les vraies données</p>
                 </div>
@@ -322,7 +322,7 @@ export default function CMSHomepageModule() {
                     type="text"
                     value={content.stats.support}
                     onChange={(e) => updateContent('stats.support', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-textarea-light"
                   />
                 </div>
               </div>
@@ -345,7 +345,7 @@ export default function CMSHomepageModule() {
                         type="text"
                         value={service.title}
                         onChange={(e) => updateContent(`services.${key}.title`, e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-textarea-light"
                       />
                     </div>
 
@@ -355,7 +355,7 @@ export default function CMSHomepageModule() {
                         value={service.description}
                         onChange={(e) => updateContent(`services.${key}.description`, e.target.value)}
                         rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-textarea-light"
                       />
                     </div>
 
@@ -365,7 +365,7 @@ export default function CMSHomepageModule() {
                         value={service.features.join('\n')}
                         onChange={(e) => updateContent(`services.${key}.features`, e.target.value.split('\n').filter(f => f.trim()))}
                         rows={4}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 form-textarea-light"
                         placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
                       />
                     </div>
