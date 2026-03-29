@@ -1,8 +1,8 @@
-/* Styles globaux pour tous les formulaires admin */
+/* Styles globaux pour tous les formulaires admin - THEME CLAIR */
 .admin-form-input {
-  background-color: #2a2a2a !important;
-  color: #ffffff !important;
-  border: 1px solid #4a4a4a !important;
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  border: 1px solid #dddddd !important;
 }
 
 .admin-form-input:focus {
@@ -12,13 +12,13 @@
 }
 
 .admin-form-input::placeholder {
-  color: #9ca3af !important;
+  color: #999999 !important;
 }
 
 .admin-form-select {
-  background-color: #2a2a2a !important;
-  color: #ffffff !important;
-  border: 1px solid #4a4a4a !important;
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  border: 1px solid #dddddd !important;
 }
 
 .admin-form-select:focus {
@@ -28,14 +28,14 @@
 }
 
 .admin-form-select option {
-  background-color: #2a2a2a !important;
-  color: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #111111 !important;
 }
 
 .admin-form-textarea {
-  background-color: #2a2a2a !important;
-  color: #ffffff !important;
-  border: 1px solid #4a4a4a !important;
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  border: 1px solid #dddddd !important;
 }
 
 .admin-form-textarea:focus {
@@ -45,65 +45,125 @@
 }
 
 .admin-form-textarea::placeholder {
-  color: #9ca3af !important;
+  color: #999999 !important;
 }
 
-/* Classes utilitaires pour les formulaires admin */
-.form-input-dark {
-  background-color: #2a2a2a !important;
-  color: #ffffff !important;
-  border: 1px solid #4a4a4a !important;
+/* Classes utilitaires pour les formulaires admin - THEME CLAIR */
+.form-input-light {
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  border: 1px solid #dddddd !important;
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
   width: 100%;
 }
 
-.form-input-dark:focus {
+.form-input-light:focus {
   outline: none !important;
   border-color: #ff4d2e !important;
   box-shadow: 0 0 0 2px rgba(255, 77, 46, 0.2) !important;
 }
 
-.form-input-dark::placeholder {
-  color: #9ca3af !important;
+.form-input-light::placeholder {
+  color: #999999 !important;
 }
 
-.form-select-dark {
-  background-color: #2a2a2a !important;
-  color: #ffffff !important;
-  border: 1px solid #4a4a4a !important;
+.form-select-light {
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  border: 1px solid #dddddd !important;
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
   width: 100%;
 }
 
-.form-select-dark:focus {
+.form-select-light:focus {
   outline: none !important;
   border-color: #ff4d2e !important;
   box-shadow: 0 0 0 2px rgba(255, 77, 46, 0.2) !important;
 }
 
-.form-select-dark option {
-  background-color: #2a2a2a !important;
-  color: #ffffff !important;
+.form-select-light option {
+  background-color: #ffffff !important;
+  color: #111111 !important;
 }
 
-.form-textarea-dark {
-  background-color: #2a2a2a !important;
-  color: #ffffff !important;
-  border: 1px solid #4a4a4a !important;
+.form-textarea-light {
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  border: 1px solid #dddddd !important;
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
   width: 100%;
   resize: vertical;
 }
 
-.form-textarea-dark:focus {
+.form-textarea-light:focus {
   outline: none !important;
   border-color: #ff4d2e !important;
   box-shadow: 0 0 0 2px rgba(255, 77, 46, 0.2) !important;
 }
 
-.form-textarea-dark::placeholder {
-  color: #9ca3af !important;
+.form-textarea-light::placeholder {
+  color: #999999 !important;
+}
+
+/* Classes alternatives pour fond gris très clair */
+.form-input-gray {
+  background-color: #f5f5f5 !important;
+  color: #111111 !important;
+  border: 1px solid #dddddd !important;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  width: 100%;
+}
+
+.form-input-gray:focus {
+  outline: none !important;
+  border-color: #ff4d2e !important;
+  box-shadow: 0 0 0 2px rgba(255, 77, 46, 0.2) !important;
+}
+
+.form-input-gray::placeholder {
+  color: #999999 !important;
+}
+
+.form-select-gray {
+  background-color: #f5f5f5 !important;
+  color: #111111 !important;
+  border: 1px solid #dddddd !important;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  width: 100%;
+}
+
+.form-select-gray:focus {
+  outline: none !important;
+  border-color: #ff4d2e !important;
+  box-shadow: 0 0 0 2px rgba(255, 77, 46, 0.2) !important;
+}
+
+.form-select-gray option {
+  background-color: #ffffff !important;
+  color: #111111 !important;
+}
+
+.form-textarea-gray {
+  background-color: #f5f5f5 !important;
+  color: #111111 !important;
+  border: 1px solid #dddddd !important;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  resize: vertical;
+}
+
+.form-textarea-gray:focus {
+  outline: none !important;
+  border-color: #ff4d2e !important;
+  box-shadow: 0 0 0 2px rgba(255, 77, 46, 0.2) !important;
+}
+
+.form-textarea-gray::placeholder {
+  color: #999999 !important;
 }
