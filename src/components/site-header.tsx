@@ -45,6 +45,12 @@ export async function SiteHeader() {
           >
             Formations
           </Link>
+          <Link
+            href="/rendez-vous"
+            className="rounded-lg px-3 py-2 text-neutral-300 transition-all hover:bg-white/[0.1] hover:text-white hover:scale-105"
+          >
+            Rendez-vous
+          </Link>
           {showMemberArea ? (
             <>
               <Link
