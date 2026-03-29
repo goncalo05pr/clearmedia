@@ -41,15 +41,15 @@ export default function ProfilePage() {
         const { data: profileData } = await supabase
           .from('profiles')
           .select('*')
-          .eq('id', user.id)
+          .eq('user_id', user.id)
           .single();
 
         setFormData({
-          name: profileData?.user_metadata?.name || user.user_metadata?.name || "",
+          name: profileData?.full_name || user.user_metadata?.name || "",
           email: user.email || "",
-          phone: profileData?.user_metadata?.phone || "",
-          birthDate: profileData?.user_metadata?.birthDate || "",
-          bio: profileData?.user_metadata?.bio || "",
+          phone: profileData?.phone || "",
+          birthDate: profileData?.birthdate || "",
+          bio: profileData?.bio || "",
           newPassword: "",
           confirmPassword: ""
         });
@@ -136,15 +136,12 @@ export default function ProfilePage() {
       const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
-          id: user.id,
-          user_metadata: {
-            name: formData.name,
-            phone: formData.phone,
-            birthDate: formData.birthDate,
-            bio: formData.bio,
-            avatar_url: avatarUrl,
-            ...preferences
-          },
+          user_id: user.id,
+          full_name: formData.name,
+          phone: formData.phone,
+          birthdate: formData.birthDate,
+          bio: formData.bio,
+          avatar_url: avatarUrl,
           updated_at: new Date().toISOString()
         });
 
