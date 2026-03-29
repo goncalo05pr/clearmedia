@@ -163,14 +163,23 @@ export default function ProfilePage() {
       }
 
       // Update password if provided
-      if (formData.newPassword) {
+      if (formData.newPassword || formData.confirmPassword) {
+        // Vérifier que les deux champs sont remplis
+        if (!formData.newPassword || !formData.confirmPassword) {
+          throw new Error("Veuillez remplir les deux champs mot de passe pour le changer.");
+        }
+        
+        // Vérifier que les mots de passe correspondent
         if (formData.newPassword !== formData.confirmPassword) {
           throw new Error("Les mots de passe ne correspondent pas.");
         }
+        
+        // Vérifier la longueur minimale
         if (formData.newPassword.length < 8) {
           throw new Error("Le mot de passe doit contenir au moins 8 caractères.");
         }
 
+        // Mettre à jour le mot de passe
         const { error: passwordError } = await supabase.auth.updateUser({
           password: formData.newPassword
         });
@@ -183,6 +192,9 @@ export default function ProfilePage() {
       // Refresh user data
       const { data: { user: updatedUser } } = await supabase.auth.getUser();
       setUser(updatedUser);
+      
+      // Réinitialiser les champs mot de passe après succès
+      resetPasswordFields();
 
     } catch (error: any) {
       setMessage(`Erreur: ${error.message}`);
@@ -190,6 +202,15 @@ export default function ProfilePage() {
       setIsLoading(false);
     }
   }
+
+  // Réinitialiser les champs mot de passe après soumission
+  const resetPasswordFields = () => {
+    setFormData(prev => ({
+      ...prev,
+      newPassword: "",
+      confirmPassword: ""
+    }));
+  };
 
   async function handleSignOut() {
     const supabase = createClient();
