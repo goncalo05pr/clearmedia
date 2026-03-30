@@ -3,6 +3,7 @@ import { isAdminUser } from "@/lib/auth-helpers";
 import { createClient } from "@/lib/supabase/server";
 import { HeaderAuth } from "@/components/header-auth";
 import { getPaidFormationIds } from "@/lib/user-purchases";
+import { MobileMenu } from "@/components/mobile-menu";
 
 export async function SiteHeader() {
   const supabase = await createClient();
@@ -32,7 +33,9 @@ export async function SiteHeader() {
         >
           KLIQZ
         </Link>
-        <div className="flex items-center gap-1 text-sm sm:gap-2">
+        
+        {/* Desktop navigation */}
+        <div className="hidden md:flex items-center gap-2 text-sm">
           <Link
             href="/"
             className="rounded-lg px-3 py-2 text-neutral-300 transition-all hover:bg-white/[0.1] hover:text-white hover:scale-105"
@@ -55,30 +58,34 @@ export async function SiteHeader() {
             <>
               <Link
                 href="/profil"
-                className="rounded-lg px-2 py-2 text-neutral-300 transition-all hover:bg-white/[0.1] hover:text-white hover:scale-105 sm:px-3"
+                className="rounded-lg px-3 py-2 text-neutral-300 transition-all hover:bg-white/[0.1] hover:text-white hover:scale-105"
               >
-                <span className="hidden sm:inline">👤 Mon profil</span>
-                <span className="sm:hidden">👤</span>
+                👤 Mon profil
               </Link>
               <Link
                 href="/espace-membre"
-                className="rounded-lg px-2 py-2 text-neutral-300 transition-all hover:bg-white/[0.1] hover:text-white hover:scale-105 sm:px-3"
+                className="rounded-lg px-3 py-2 text-neutral-300 transition-all hover:bg-white/[0.1] hover:text-white hover:scale-105"
               >
-                <span className="hidden sm:inline">Espace membre</span>
-                <span className="sm:hidden">Membre</span>
+                Espace membre
               </Link>
             </>
           ) : null}
           {isAdmin ? (
             <Link
               href="/admin"
-              className="rounded-lg px-2 py-2 text-neutral-300 transition-all hover:bg-red-500/20 hover:text-red-300 hover:scale-105 sm:px-3"
+              className="rounded-lg px-3 py-2 text-neutral-300 transition-all hover:bg-red-500/20 hover:text-red-300 hover:scale-105"
             >
-              <span className="hidden sm:inline">🚀 Admin</span>
-              <span className="sm:hidden">🚀</span>
+              🚀 Admin
             </Link>
           ) : null}
           <HeaderAuth email={user?.email ?? null} />
+        </div>
+
+        {/* Mobile menu */}
+        <div className="md:hidden">
+          <MobileMenu showMemberArea={showMemberArea} isAdmin={isAdmin}>
+            <HeaderAuth email={user?.email ?? null} />
+          </MobileMenu>
         </div>
       </nav>
     </header>

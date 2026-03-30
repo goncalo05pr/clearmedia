@@ -61,31 +61,31 @@ export default function RendezVousPage() {
 
         {/* Avantages */}
         <div className="max-w-5xl mx-auto mb-16">
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
             <div className="text-center p-6 rounded-lg border border-gray-800 hover:border-red-500/50 transition-all" style={{ backgroundColor: "#1a1a1a" }}>
-              <div className="text-4xl mb-4">✅</div>
-              <h3 className="text-xl font-bold mb-3" style={{ color: "#ffffff" }}>
+              <div className="text-3xl md:text-4xl mb-4">✅</div>
+              <h3 className="text-lg md:text-xl font-bold mb-3" style={{ color: "#ffffff" }}>
                 Gratuit et sans engagement
               </h3>
-              <p style={{ color: "#a0a0a0" }}>
+              <p className="text-sm md:text-base" style={{ color: "#a0a0a0" }}>
                 Un appel découverte 100% gratuit pour évaluer ensemble la pertinence de notre accompagnement.
               </p>
             </div>
             <div className="text-center p-6 rounded-lg border border-gray-800 hover:border-red-500/50 transition-all" style={{ backgroundColor: "#1a1a1a" }}>
-              <div className="text-4xl mb-4">⚡</div>
-              <h3 className="text-xl font-bold mb-3" style={{ color: "#ffffff" }}>
+              <div className="text-3xl md:text-4xl mb-4">⚡</div>
+              <h3 className="text-lg md:text-xl font-bold mb-3" style={{ color: "#ffffff" }}>
                 Réponse sous 24h
               </h3>
-              <p style={{ color: "#a0a0a0" }}>
+              <p className="text-sm md:text-base" style={{ color: "#a0a0a0" }}>
                 Confirmation immédiate et prise en charge rapide pour démarrer votre parcours sans attendre.
               </p>
             </div>
             <div className="text-center p-6 rounded-lg border border-gray-800 hover:border-red-500/50 transition-all" style={{ backgroundColor: "#1a1a1a" }}>
-              <div className="text-4xl mb-4">🎯</div>
-              <h3 className="text-xl font-bold mb-3" style={{ color: "#ffffff" }}>
+              <div className="text-3xl md:text-4xl mb-4">🎯</div>
+              <h3 className="text-lg md:text-xl font-bold mb-3" style={{ color: "#ffffff" }}>
                 Stratégie personnalisée
               </h3>
-              <p style={{ color: "#a0a0a0" }}>
+              <p className="text-sm md:text-base" style={{ color: "#a0a0a0" }}>
                 Analyse approfondie de vos besoins et proposition d'un plan d'action sur mesure.
               </p>
             </div>
@@ -101,7 +101,7 @@ export default function RendezVousPage() {
             >
               Choisissez votre créneau
             </h3>
-            <p style={{ color: "#a0a0a0" }}>
+            <p className="text-sm md:text-base" style={{ color: "#a0a0a0" }}>
               Sélectionnez le moment qui vous convient le mieux pour votre appel stratégique
             </p>
           </div>
@@ -109,8 +109,8 @@ export default function RendezVousPage() {
             className="calendly-inline-widget"
             data-url="https://calendly.com/kliqz/30min?hide_event_type_details=1&hide_gdpr_banner=1&background_color=0a0a0a&text_color=ffffff&primary_color=ff4d2e"
             style={{ 
-              minWidth: "320px", 
-              height: "750px",
+              minWidth: "300px", 
+              height: "650px",
               borderRadius: "16px",
               overflow: "hidden",
               boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)"

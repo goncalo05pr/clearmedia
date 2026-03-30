@@ -219,23 +219,23 @@ export default function CMSEnabledHomepage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Hero Section */}
-      <section className="relative py-20 px-4 overflow-hidden">
+      <section className="relative py-12 md:py-20 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#ff4d2e]/20 to-transparent"></div>
         <div className="relative max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-[#ff4d2e] bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-white to-[#ff4d2e] bg-clip-text text-transparent">
             {content.heroTitle}
           </h1>
-          <h2 className="text-2xl md:text-3xl text-[#ff4d2e] mb-4">
+          <h2 className="text-xl md:text-2xl lg:text-3xl text-[#ff4d2e] mb-3 md:mb-4">
             {content.heroSubtitle}
           </h2>
-          <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-300 mb-6 md:mb-8 max-w-3xl mx-auto">
             {content.heroDescription}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-[#ff4d2e] hover:bg-[#ff6b3d] text-white px-8 py-4 rounded-full font-semibold text-lg transition-all hover:scale-105 hover:shadow-2xl">
+            <button className="w-full sm:w-auto bg-[#ff4d2e] hover:bg-[#ff6b3d] text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg transition-all hover:scale-105 hover:shadow-2xl">
               Commencer maintenant
             </button>
-            <button className="border-2 border-white/20 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all hover:bg-white/10 hover:scale-105">
+            <button className="w-full sm:w-auto border-2 border-white/20 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg transition-all hover:bg-white/10 hover:scale-105">
               Voir les résultats
             </button>
           </div>
@@ -243,43 +243,43 @@ export default function CMSEnabledHomepage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 px-4 bg-gradient-to-b from-black to-[#0a0a0a]">
+      <section className="py-12 md:py-16 px-4 bg-gradient-to-b from-black to-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-              <div className="text-4xl font-bold text-[#ff4d2e] mb-2">{stats.formationsSold}</div>
-              <div className="text-gray-300">Formations vendues</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center">
+            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-white/10">
+              <div className="text-3xl md:text-4xl font-bold text-[#ff4d2e] mb-2">{stats.formationsSold}</div>
+              <div className="text-gray-300 text-sm md:text-base">Formations vendues</div>
             </div>
-            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-              <div className="text-4xl font-bold text-[#ff4d2e] mb-2">{stats.satisfactionRate}%</div>
-              <div className="text-gray-300">Taux de satisfaction</div>
+            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-white/10">
+              <div className="text-3xl md:text-4xl font-bold text-[#ff4d2e] mb-2">{stats.satisfactionRate}%</div>
+              <div className="text-gray-300 text-sm md:text-base">Taux de satisfaction</div>
             </div>
-            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-              <div className="text-4xl font-bold text-[#ff4d2e] mb-2">{stats.clientsCount}+</div>
-              <div className="text-gray-300">Clients satisfaits</div>
+            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-white/10">
+              <div className="text-3xl md:text-4xl font-bold text-[#ff4d2e] mb-2">{stats.clientsCount}+</div>
+              <div className="text-gray-300 text-sm md:text-base">Clients satisfaits</div>
             </div>
-            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-              <div className="text-4xl font-bold text-[#ff4d2e] mb-2">{stats.support}</div>
-              <div className="text-gray-300">Support disponible</div>
+            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-white/10">
+              <div className="text-3xl md:text-4xl font-bold text-[#ff4d2e] mb-2">{stats.support}</div>
+              <div className="text-gray-300 text-sm md:text-base">Support disponible</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Services Section */}
-      <section className="py-20 px-4 bg-[#0a0a0a]">
+      <section className="py-16 md:py-20 px-4 bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Nos Services</h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Nos Services</h2>
+            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
               Des solutions complètes pour transformer votre présence en ligne en machine à revenus
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {Object.entries(content.services).map(([key, service]) => (
-              <div key={key} className="group bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 hover:border-[#ff4d2e]/50 transition-all duration-300 hover:scale-105">
-                <div className="text-4xl mb-4">
+              <div key={key} className="group bg-white/5 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-white/10 hover:border-[#ff4d2e]/50 transition-all duration-300 hover:scale-105">
+                <div className="text-3xl md:text-4xl mb-4">
                   {key === 'seo' && '🔍'}
                   {key === 'ads' && '📱'}
                   {key === 'socialMedia' && '📱'}
@@ -287,12 +287,12 @@ export default function CMSEnabledHomepage() {
                   {key === 'analytics' && '📊'}
                   {key === 'branding' && '🎨'}
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">{service.title}</h3>
-                <p className="text-gray-300 mb-6">{service.description}</p>
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-4">{service.title}</h3>
+                <p className="text-gray-300 mb-6 text-sm md:text-base">{service.description}</p>
                 <ul className="space-y-2">
                   {service.features.map((feature, index) => (
-                    <li key={index} className="flex items-center text-gray-300">
-                      <span className="text-[#ff4d2e] mr-2">✓</span>
+                    <li key={index} className="flex items-center text-gray-400 text-sm md:text-base">
+                      <span className="text-[#ff4d2e] mr-2">•</span>
                       {feature}
                     </li>
                   ))}
