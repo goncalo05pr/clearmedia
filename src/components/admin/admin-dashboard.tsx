@@ -43,24 +43,3 @@ export default function AdminDashboard() {
 
   return <DashboardModule />;
 }
-              <Link 
-                href="/profil"
-                className="flex items-center space-x-3 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                title="Mon profil"
-              >
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-                  {user.email?.charAt(0).toUpperCase()}
-                </div>
-                <span className="text-sm font-medium">{user.email?.split('@')[0]}</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-        
-        <div className="p-6">
-          <ActiveComponent />
-        </div>
-      </div>
-    </div>
-  );
-}
