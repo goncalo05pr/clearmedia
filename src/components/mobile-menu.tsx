@@ -32,7 +32,7 @@ export function MobileMenu({ children, showMemberArea, isAdmin }: MobileMenuProp
         <div className="fixed inset-0 z-50 md:hidden">
           {/* Backdrop */}
           <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 bg-black"
             onClick={() => setIsOpen(false)}
           />
           
@@ -54,7 +54,11 @@ export function MobileMenu({ children, showMemberArea, isAdmin }: MobileMenuProp
               <div className="mb-8">
                 <Link
                   href="/"
-                  onClick={() => setIsOpen(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsOpen(false);
+                    window.location.href = '/';
+                  }}
                   className="font-heading text-2xl font-bold tracking-tight text-white"
                 >
                   KLIQZ
@@ -63,55 +67,73 @@ export function MobileMenu({ children, showMemberArea, isAdmin }: MobileMenuProp
 
               {/* Navigation links */}
               <nav className="space-y-2">
-                <Link
-                  href="/"
-                  onClick={() => setIsOpen(false)}
-                  className="block px-4 py-3 rounded-lg text-neutral-300 hover:bg-white/[0.1] hover:text-white transition-all"
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsOpen(false);
+                    window.location.href = '/';
+                  }}
+                  className="block w-full text-left px-4 py-3 rounded-lg text-neutral-300 hover:bg-white/[0.1] hover:text-white transition-all"
                 >
                   Accueil
-                </Link>
-                <Link
-                  href="/formations"
-                  onClick={() => setIsOpen(false)}
-                  className="block px-4 py-3 rounded-lg text-neutral-300 hover:bg-white/[0.1] hover:text-white transition-all"
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsOpen(false);
+                    window.location.href = '/formations';
+                  }}
+                  className="block w-full text-left px-4 py-3 rounded-lg text-neutral-300 hover:bg-white/[0.1] hover:text-white transition-all"
                 >
                   Formations
-                </Link>
-                <Link
-                  href="/rendez-vous"
-                  onClick={() => setIsOpen(false)}
-                  className="block px-4 py-3 rounded-lg text-neutral-300 hover:bg-white/[0.1] hover:text-white transition-all"
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsOpen(false);
+                    window.location.href = '/rendez-vous';
+                  }}
+                  className="block w-full text-left px-4 py-3 rounded-lg text-neutral-300 hover:bg-white/[0.1] hover:text-white transition-all"
                 >
                   Rendez-vous
-                </Link>
+                </button>
                 
                 {showMemberArea && (
                   <>
-                    <Link
-                      href="/profil"
-                      onClick={() => setIsOpen(false)}
-                      className="block px-4 py-3 rounded-lg text-neutral-300 hover:bg-white/[0.1] hover:text-white transition-all"
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsOpen(false);
+                        window.location.href = '/profil';
+                      }}
+                      className="block w-full text-left px-4 py-3 rounded-lg text-neutral-300 hover:bg-white/[0.1] hover:text-white transition-all"
                     >
                       👤 Mon profil
-                    </Link>
-                    <Link
-                      href="/espace-membre"
-                      onClick={() => setIsOpen(false)}
-                      className="block px-4 py-3 rounded-lg text-neutral-300 hover:bg-white/[0.1] hover:text-white transition-all"
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsOpen(false);
+                        window.location.href = '/espace-membre';
+                      }}
+                      className="block w-full text-left px-4 py-3 rounded-lg text-neutral-300 hover:bg-white/[0.1] hover:text-white transition-all"
                     >
                       Espace membre
-                    </Link>
+                    </button>
                   </>
                 )}
                 
                 {isAdmin && (
-                  <Link
-                    href="/admin"
-                    onClick={() => setIsOpen(false)}
-                    className="block px-4 py-3 rounded-lg text-neutral-300 hover:bg-red-500/20 hover:text-red-300 transition-all"
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsOpen(false);
+                      window.location.href = '/admin';
+                    }}
+                    className="block w-full text-left px-4 py-3 rounded-lg text-neutral-300 hover:bg-red-500/20 hover:text-red-300 transition-all"
                   >
                     🚀 Admin
-                  </Link>
+                  </button>
                 )}
                 
                 {/* Auth component */}
