@@ -232,10 +232,16 @@ export default function CMSEnabledHomepage() {
             {content.heroDescription}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="w-full sm:w-auto bg-[#ff4d2e] hover:bg-[#ff6b3d] text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg transition-all hover:scale-105 hover:shadow-2xl">
+            <button 
+              onClick={() => window.location.href = '/formations'}
+              className="w-full sm:w-auto bg-[#ff4d2e] hover:bg-[#ff6b3d] text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg transition-all hover:scale-105 hover:shadow-2xl"
+            >
               Commencer maintenant
             </button>
-            <button className="w-full sm:w-auto border-2 border-white/20 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg transition-all hover:bg-white/10 hover:scale-105">
+            <button 
+              onClick={() => window.location.href = '/rendez-vous'}
+              className="w-full sm:w-auto border-2 border-white/20 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg transition-all hover:bg-white/10 hover:scale-105"
+            >
               Voir les résultats
             </button>
           </div>
