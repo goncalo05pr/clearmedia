@@ -40,6 +40,43 @@ export async function POST(request: Request) {
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
+
+      // Send purchase confirmation email
+      try {
+        // Get user email
+        const { data: userData } = await getSupabaseAdmin()
+          .from('profiles')
+          .select('email')
+          .eq('id', userId)
+          .single();
+
+        // Get formation details
+        const { data: formationData } = await getSupabaseAdmin()
+          .from('formations')
+          .select('title')
+          .eq('id', formationId)
+          .single();
+
+        if (userData?.email && formationData?.title) {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://kliqz.vercel.app'}/api/emails/purchase`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: userData.email,
+              formationTitle: formationData.title,
+              formationId: formationId,
+            }),
+          });
+
+          if (!response.ok) {
+            console.error('Failed to send purchase confirmation email');
+          }
+        }
+      } catch (emailError) {
+        console.error('Error sending purchase confirmation email:', emailError);
+      }
     }
   }
 

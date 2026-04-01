@@ -25,6 +25,27 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
   const [message, setMessage] = useState("");
   const router = useRouter();
 
+  async function sendWelcomeEmail(userEmail: string, userName?: string) {
+    try {
+      const response = await fetch('/api/emails/welcome', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: userEmail,
+          userName: userName || userEmail.split('@')[0],
+        }),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to send welcome email');
+      }
+    } catch (error) {
+      console.error('Error sending welcome email:', error);
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsLoading(true);
@@ -71,11 +92,15 @@ export function AuthForm({ redirectTo = "/espace-membre" }: AuthFormProps) {
       }
 
       if (data.session) {
+        // Send welcome email for immediate login
+        await sendWelcomeEmail(email, email.split('@')[0]);
         router.push(redirectTo);
         router.refresh();
         return;
       }
 
+      // Send welcome email for email confirmation case
+      await sendWelcomeEmail(email, email.split('@')[0]);
       setMessage("Compte créé ! Vérifie ta boîte mail et clique sur le lien de confirmation.");
       return;
     }
