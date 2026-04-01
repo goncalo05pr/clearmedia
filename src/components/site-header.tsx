@@ -25,8 +25,8 @@ export async function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50 glass-strong">
-      <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-5 sm:px-6">
+    <header className="sticky top-0 z-[9999] glass-strong" style={{ background: "#0a0a0a !important", backgroundColor: "#0a0a0a !important", opacity: "1 !important" }}>
+      <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-5 sm:px-6" style={{ background: "#0a0a0a !important", backgroundColor: "#0a0a0a !important", opacity: "1 !important" }}>
         <Link
           href="/"
           className="font-heading text-lg font-bold tracking-tight text-white transition-all hover:scale-105 hover:text-transparent hover:bg-gradient-to-r hover:from-[#8B5CF6] hover:to-[#EC4899] hover:bg-clip-text"

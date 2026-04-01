@@ -17,7 +17,8 @@ export function MobileMenu({ children, showMemberArea, isAdmin }: MobileMenuProp
       {/* Menu hamburger button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden p-2 rounded-lg text-neutral-300 hover:bg-white/[0.1] hover:text-white transition-all"
+        className="md:hidden p-2 rounded-lg text-neutral-300 hover:bg-white/[0.1] hover:text-white transition-all relative z-[9999]"
+        style={{ background: "#0a0a0a !important", backgroundColor: "#0a0a0a !important", opacity: "1 !important" }}
         aria-label="Menu"
       >
         <div className="w-6 h-6 flex flex-col justify-center items-center">
