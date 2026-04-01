@@ -4,6 +4,8 @@ export type Formation = {
   description: string;
   price: number;
   stripePriceId?: string;
+  stripe_product_id?: string;
+  stripe_price_id?: string;
 };
 
 export const formations: Formation[] = [

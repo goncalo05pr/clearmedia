@@ -38,6 +38,18 @@ export async function POST(request: NextRequest) {
 
     console.log('Formation found:', formation);
 
+    // Check if formation has a Stripe price ID from database
+    if (!formation.stripe_price_id && !formation.stripePriceId) {
+      console.error('No Stripe price ID found for formation:', formationId);
+      return NextResponse.json(
+        { error: 'Formation not configured for payment' },
+        { status: 400 }
+      );
+    }
+
+    const stripePriceId = formation.stripe_price_id || formation.stripePriceId;
+    console.log('Using Stripe price ID:', stripePriceId);
+
     // Get current user
     const supabase = await createClient();
     const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -69,15 +81,7 @@ export async function POST(request: NextRequest) {
       payment_method_types: ['card'],
       line_items: [
         {
-          price_data: {
-            currency: 'chf',
-            product_data: {
-              name: formation.title,
-              description: formation.description,
-              images: [], // Add product images if available
-            },
-            unit_amount: formation.price * 100, // Convert to cents
-          },
+          price: stripePriceId, // Utiliser le prix existant au lieu de créer dynamiquement
           quantity: 1,
         },
       ],

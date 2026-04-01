@@ -139,7 +139,31 @@ export default function FormationsModule() {
         }
       }
 
-      // Créer la formation
+      // 1. Créer le produit et prix Stripe
+      console.log('Creating Stripe product for formation:', formData.title);
+      const stripeResponse = await fetch('/api/admin/stripe/create-product', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: formData.title,
+          description: formData.description,
+          price: parseFloat(formData.price) || 0,
+        }),
+      });
+
+      const stripeResult = await stripeResponse.json();
+      
+      if (!stripeResponse.ok || !stripeResult.success) {
+        console.error('Stripe product creation failed:', stripeResult.error);
+        alert(`Erreur Stripe: ${stripeResult.error}`);
+        return;
+      }
+
+      console.log('Stripe product created successfully:', stripeResult);
+
+      // 2. Créer la formation avec le stripe_price_id
       const { data: formationData, error: formationError } = await supabase
         .from('formations')
         .insert({
@@ -151,6 +175,8 @@ export default function FormationsModule() {
           level: formData.level,
           duration: formData.duration,
           formation_type: formData.formationType,
+          stripe_product_id: stripeResult.productId,
+          stripe_price_id: stripeResult.priceId,
           created_at: new Date().toISOString()
         })
         .select()
@@ -158,8 +184,11 @@ export default function FormationsModule() {
 
       if (formationError) {
         console.error('Error creating formation:', formationError);
+        alert(`Erreur création formation: ${formationError.message}`);
         return;
       }
+
+      console.log('Formation created successfully:', formationData);
 
       // Créer les modules
       for (let i = 0; i < modules.length; i++) {
