@@ -14,10 +14,6 @@ export async function POST(request: NextRequest) {
       NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     });
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kliqz.vercel.app';
-    console.log('Using site URL from environment:', siteUrl);
-    console.log('Environment NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL);
-
     if (!formationId) {
       console.error('Formation ID missing');
       return NextResponse.json(
@@ -37,20 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('Formation found:', formation);
-    console.log('Formation stripe_price_id:', formation.stripe_price_id);
-    console.log('Formation stripePriceId:', formation.stripePriceId);
-
-    // Check if formation has a Stripe price ID from database
-    if (!formation.stripe_price_id && !formation.stripePriceId) {
-      console.error('No Stripe price ID found for formation:', formationId);
-      return NextResponse.json(
-        { error: 'Formation not configured for payment. Admin must create Stripe product first.' },
-        { status: 400 }
-      );
-    }
-
-    const stripePriceId = formation.stripe_price_id || formation.stripePriceId;
-    console.log('Using Stripe price ID:', stripePriceId);
+    console.log('Formation price (CHF):', formation.price);
 
     // Get current user
     const supabase = await createClient();
@@ -83,7 +66,15 @@ export async function POST(request: NextRequest) {
       payment_method_types: ['card'],
       line_items: [
         {
-          price: stripePriceId, // Utiliser le prix existant au lieu de créer dynamiquement
+          price_data: {
+            currency: 'chf',
+            product_data: {
+              name: formation.title,
+              description: formation.description,
+              images: [], // Add product images if available
+            },
+            unit_amount: formation.price * 100, // Convert to cents
+          },
           quantity: 1,
         },
       ],
