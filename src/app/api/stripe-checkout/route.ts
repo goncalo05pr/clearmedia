@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
       cancel_url: 'https://kliqz.vercel.app/formations?cancelled=true',
       metadata: {
         formation_id: formationId,
-        supabase_user_id: user.id,
+        user_id: user.id,  // Utiliser user_id au lieu de supabase_user_id
         formation_title: formation.title,
         formation_price: formation.price.toString(),
       },

@@ -35,7 +35,7 @@ export async function POST(request: Request) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    const userId = session.metadata?.supabase_user_id;
+    const userId = session.metadata?.user_id;  // Changer de supabase_user_id à user_id
     const formationId = session.metadata?.formation_id;
     const formationTitle = session.metadata?.formation_title;
     const formationPrice = session.metadata?.formation_price;
@@ -47,7 +47,8 @@ export async function POST(request: Request) {
       formationTitle,
       formationPrice,
       customerEmail: session.customer_email,
-      paymentStatus: session.payment_status
+      paymentStatus: session.payment_status,
+      allMetadata: session.metadata  // Ajouter tous les metadata pour debug
     });
 
     if (userId && formationId) {
