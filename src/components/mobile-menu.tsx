@@ -2,16 +2,28 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 interface MobileMenuProps {
   children: React.ReactNode;
   showMemberArea: boolean;
   isAdmin: boolean;
   isLoggedIn: boolean;
+  email?: string | null;
 }
 
-export function MobileMenu({ children, showMemberArea, isAdmin, isLoggedIn }: MobileMenuProps) {
+export function MobileMenu({ children, showMemberArea, isAdmin, isLoggedIn, email }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    setIsOpen(false);
+    router.push("/");
+    router.refresh();
+  };
 
   return (
     <>
@@ -146,7 +158,25 @@ export function MobileMenu({ children, showMemberArea, isAdmin, isLoggedIn }: Mo
                 
                 {/* Auth component */}
                 <div className="pt-4 border-t border-white/10">
-                  {children}
+                  {!email ? (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsOpen(false);
+                        window.location.href = '/connexion';
+                      }}
+                      className="w-full btn-gradient rounded-full px-6 py-2 text-sm font-bold text-white transition-all hover:scale-105 hover:shadow-lg"
+                    >
+                      🚀 Connexion
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleLogout}
+                      className="w-full bg-red-500 hover:bg-red-600 text-white rounded-full px-6 py-2 text-sm font-bold transition-all hover:scale-105 hover:shadow-lg"
+                    >
+                      🚪 Déconnexion
+                    </button>
+                  )}
                 </div>
               </nav>
             </div>

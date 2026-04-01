@@ -85,8 +85,8 @@ export async function SiteHeader() {
 
         {/* Mobile menu */}
         <div className="md:hidden">
-          <MobileMenu showMemberArea={showMemberArea} isAdmin={isAdmin} isLoggedIn={isLoggedIn}>
-            <HeaderAuth email={user?.email ?? null} />
+          <MobileMenu showMemberArea={showMemberArea} isAdmin={isAdmin} isLoggedIn={isLoggedIn} email={user?.email ?? null}>
+            <div></div>
           </MobileMenu>
         </div>
       </nav>
