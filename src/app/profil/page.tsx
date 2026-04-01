@@ -239,6 +239,16 @@ export default function ProfilePage() {
           </header>
 
           <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Champ caché pour tromper le navigateur */}
+            <input
+              type="text"
+              name="username"
+              autoComplete="username"
+              style={{ display: 'none' }}
+              tabIndex={-1}
+              aria-hidden="true"
+            />
+            
             {/* Photo de profil */}
             <div className="text-center">
               <label className="block text-sm font-medium text-gray-300 mb-4">
