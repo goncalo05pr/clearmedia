@@ -73,7 +73,7 @@ export default async function FormationsPage({ searchParams }: PageProps) {
               </p>
               <p className="mt-6 text-2xl font-semibold tabular-nums text-white">
                 {formation.price}
-                <span className="ml-1 text-sm font-normal text-neutral-500">EUR</span>
+                <span className="ml-1 text-sm font-normal text-neutral-500">CHF</span>
               </p>
               <div className="mt-6 flex-1" />
               <div className="mt-auto pt-2">

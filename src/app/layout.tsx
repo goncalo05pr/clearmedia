@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Syne } from "next/font/google";
 import { SiteHeader } from "@/components/site-header";
+import Script from "next/script";
 import "./globals.css";
 import "../styles/admin-forms.css";
 
@@ -32,6 +33,10 @@ export default function RootLayout({
       className={`${syne.variable} ${dmSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col text-[#F8FAFC] bg-black">
+        <Script 
+          src="https://js.stripe.com/v3/" 
+          strategy="afterInteractive"
+        />
         <SiteHeader />
         <main className="flex-1">
           {children}

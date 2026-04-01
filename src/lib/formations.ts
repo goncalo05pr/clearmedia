@@ -3,29 +3,33 @@ export type Formation = {
   title: string;
   description: string;
   price: number;
+  stripePriceId?: string;
 };
 
 export const formations: Formation[] = [
   {
-    id: "formation-social-ads",
-    title: "Social Ads Performance",
+    id: "formation-seo-masterclass",
+    title: "SEO Masterclass",
     description:
-      "Apprends a concevoir des campagnes Meta et TikTok rentables pour des offres digitales.",
+      "Maîtrise le SEO technique et stratégique pour dominer Google et générer du trafic organique qualifié.",
     price: 97,
+    stripePriceId: "price_seo_masterclass", // À créer dans Stripe Dashboard
   },
   {
-    id: "formation-funnel-premium",
-    title: "Funnel Premium",
+    id: "formation-ads-pro",
+    title: "Ads Pro",
     description:
-      "Structure un funnel complet (landing, offres, upsell) pour augmenter la valeur client.",
+      "Deviens expert en publicités payantes (Meta, TikTok, Google) avec un ROI garanti.",
     price: 147,
+    stripePriceId: "price_ads_pro", // À créer dans Stripe Dashboard
   },
   {
-    id: "formation-copy-closing",
-    title: "Copywriting & Closing",
+    id: "formation-social-branding",
+    title: "Social Media & Personal Branding",
     description:
-      "Maitrise les scripts et frameworks de copywriting qui transforment ton trafic en ventes.",
+      "Construis une marque personnelle puissante et transforme ton audience en clients payants.",
     price: 79,
+    stripePriceId: "price_social_branding", // À créer dans Stripe Dashboard
   },
 ];
 
