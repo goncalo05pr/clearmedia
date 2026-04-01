@@ -14,8 +14,8 @@ export async function POST(request: NextRequest) {
       NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     });
 
-    const siteUrl = 'https://kliqz.vercel.app';
-    console.log('Using fixed site URL:', siteUrl);
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kliqz.vercel.app';
+    console.log('Using site URL from environment:', siteUrl);
     console.log('Environment NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL);
 
     if (!formationId) {
@@ -37,12 +37,14 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('Formation found:', formation);
+    console.log('Formation stripe_price_id:', formation.stripe_price_id);
+    console.log('Formation stripePriceId:', formation.stripePriceId);
 
     // Check if formation has a Stripe price ID from database
     if (!formation.stripe_price_id && !formation.stripePriceId) {
       console.error('No Stripe price ID found for formation:', formationId);
       return NextResponse.json(
-        { error: 'Formation not configured for payment' },
+        { error: 'Formation not configured for payment. Admin must create Stripe product first.' },
         { status: 400 }
       );
     }
