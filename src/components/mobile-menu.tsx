@@ -29,15 +29,16 @@ export function MobileMenu({ children, showMemberArea, isAdmin }: MobileMenuProp
 
       {/* Mobile menu overlay */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-[9999] md:hidden">
           {/* Backdrop */}
           <div 
             className="fixed inset-0 bg-black"
+            style={{ backgroundColor: "#0a0a0a" }}
             onClick={() => setIsOpen(false)}
           />
           
           {/* Menu panel */}
-          <div className="fixed right-0 top-0 h-full w-80 bg-black border-l border-white/10 shadow-2xl">
+          <div className="fixed right-0 top-0 h-full w-80 bg-black border-l border-white/10 shadow-2xl z-[9999]" style={{ backgroundColor: "#0a0a0a" }}>
             <div className="p-6">
               {/* Close button */}
               <button

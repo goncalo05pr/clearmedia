@@ -231,16 +231,24 @@ export default function CMSEnabledHomepage() {
           <p className="text-lg md:text-xl text-gray-300 mb-6 md:mb-8 max-w-3xl mx-auto">
             {content.heroDescription}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
             <button 
-              onClick={() => window.location.href = '/formations'}
-              className="w-full sm:w-auto bg-[#ff4d2e] hover:bg-[#ff6b3d] text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg transition-all hover:scale-105 hover:shadow-2xl"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.location.href = '/formations';
+              }}
+              className="w-full sm:w-auto bg-[#ff4d2e] hover:bg-[#ff6b3d] text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg transition-all hover:scale-105 hover:shadow-2xl relative z-20"
             >
               Commencer maintenant
             </button>
             <button 
-              onClick={() => window.location.href = '/rendez-vous'}
-              className="w-full sm:w-auto border-2 border-white/20 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg transition-all hover:bg-white/10 hover:scale-105"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.location.href = '/rendez-vous';
+              }}
+              className="w-full sm:w-auto border-2 border-white/20 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg transition-all hover:bg-white/10 hover:scale-105 relative z-20"
             >
               Voir les résultats
             </button>
