@@ -14,8 +14,9 @@ export async function POST(request: NextRequest) {
       NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     });
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kliqz.vercel.app';
-    console.log('Using site URL:', siteUrl);
+    const siteUrl = 'https://kliqz.vercel.app';
+    console.log('Using fixed site URL:', siteUrl);
+    console.log('Environment NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL);
 
     if (!formationId) {
       console.error('Formation ID missing');
