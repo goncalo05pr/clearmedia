@@ -56,7 +56,7 @@ export async function SiteHeader() {
           >
             Rendez-vous
           </Link>
-          {showMemberArea ? (
+          {isLoggedIn ? (
             <>
               <Link
                 href="/profil"
@@ -64,12 +64,14 @@ export async function SiteHeader() {
               >
                 👤 Mon profil
               </Link>
-              <Link
-                href="/espace-membre"
-                className="rounded-lg px-3 py-2 text-neutral-300 transition-all hover:bg-white/[0.1] hover:text-white hover:scale-105"
-              >
-                Espace membre
-              </Link>
+              {showMemberArea ? (
+                <Link
+                  href="/espace-membre"
+                  className="rounded-lg px-3 py-2 text-neutral-300 transition-all hover:bg-white/[0.1] hover:text-white hover:scale-105"
+                >
+                  Espace membre
+                </Link>
+              ) : null}
             </>
           ) : null}
           {isAdmin ? (
