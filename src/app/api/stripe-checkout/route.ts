@@ -14,6 +14,9 @@ export async function POST(request: NextRequest) {
       NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     });
 
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kliqz.vercel.app';
+    console.log('Using site URL:', siteUrl);
+
     if (!formationId) {
       console.error('Formation ID missing');
       return NextResponse.json(
@@ -78,8 +81,8 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://kliqz.vercel.app'}/espace-membre?session_id={CHECKOUT_SESSION_ID}&success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://kliqz.vercel.app'}/formations?cancelled=true`,
+      success_url: `${siteUrl}/espace-membre?session_id={CHECKOUT_SESSION_ID}&success=true`,
+      cancel_url: `${siteUrl}/formations?cancelled=true`,
       metadata: {
         formation_id: formationId,
         supabase_user_id: user.id,
