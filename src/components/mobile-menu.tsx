@@ -7,9 +7,10 @@ interface MobileMenuProps {
   children: React.ReactNode;
   showMemberArea: boolean;
   isAdmin: boolean;
+  isLoggedIn: boolean;
 }
 
-export function MobileMenu({ children, showMemberArea, isAdmin }: MobileMenuProps) {
+export function MobileMenu({ children, showMemberArea, isAdmin, isLoggedIn }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -100,7 +101,7 @@ export function MobileMenu({ children, showMemberArea, isAdmin }: MobileMenuProp
                   Rendez-vous
                 </button>
                 
-                {showMemberArea && (
+                {isLoggedIn && (
                   <>
                     <button
                       onClick={(e) => {
@@ -112,6 +113,11 @@ export function MobileMenu({ children, showMemberArea, isAdmin }: MobileMenuProp
                     >
                       👤 Mon profil
                     </button>
+                  </>
+                )}
+                
+                {showMemberArea && (
+                  <>
                     <button
                       onClick={(e) => {
                         e.preventDefault();

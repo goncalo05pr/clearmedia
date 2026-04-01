@@ -13,8 +13,10 @@ export async function SiteHeader() {
 
   let showMemberArea = false;
   let isAdmin = false;
+  let isLoggedIn = false;
   
   if (user) {
+    isLoggedIn = true;
     if (isAdminUser(user)) {
       showMemberArea = true;
       isAdmin = true;
@@ -83,7 +85,7 @@ export async function SiteHeader() {
 
         {/* Mobile menu */}
         <div className="md:hidden">
-          <MobileMenu showMemberArea={showMemberArea} isAdmin={isAdmin}>
+          <MobileMenu showMemberArea={showMemberArea} isAdmin={isAdmin} isLoggedIn={isLoggedIn}>
             <HeaderAuth email={user?.email ?? null} />
           </MobileMenu>
         </div>
