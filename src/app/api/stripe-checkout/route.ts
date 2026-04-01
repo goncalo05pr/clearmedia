@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/server';
 import { getFormationById } from '@/lib/formations';
 import type Stripe from 'stripe';
 
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     console.log('Formation found:', formation);
 
     // Get current user
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: userError } = await supabase.auth.getUser();
 
     if (userError || !user) {
