@@ -406,10 +406,12 @@ export default function ProfilePage() {
                     Nouveau mot de passe (optionnel)
                   </label>
                   <PasswordInput
+                    key="new-password-field"
                     value={formData.newPassword}
                     onChange={(value) => setFormData({...formData, newPassword: value})}
                     placeholder="Laisser vide pour ne pas changer"
                     minLength={8}
+                    autoComplete="new-password"
                   />
                 </div>
 
@@ -419,10 +421,12 @@ export default function ProfilePage() {
                       Confirmer le mot de passe
                     </label>
                     <PasswordInput
+                      key="confirm-password-field"
                       value={formData.confirmPassword}
                       onChange={(value) => setFormData({...formData, confirmPassword: value})}
                       placeholder="Confirmer votre nouveau mot de passe"
                       minLength={8}
+                      autoComplete="new-password"
                     />
                   </div>
                 )}
