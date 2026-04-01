@@ -17,6 +17,14 @@ export default async function EspaceMembrePage() {
 
   const isAdmin = isAdminUser(user);
   const paidResult = await getPaidFormationIds(supabase, user.id);
+  
+  console.log('Espace membre debug:', {
+    userId: user.id,
+    isAdmin,
+    paidResult,
+    paidIds: paidResult.ok ? Array.from(paidResult.ids) : [],
+    totalFormations: formations.length
+  });
 
   if (!isAdmin) {
     if (!paidResult.ok) {
@@ -28,6 +36,9 @@ export default async function EspaceMembrePage() {
             </h1>
             <p className="mt-4 text-red-300/90 max-w-md">
               Impossible de charger tes achats : {paidResult.error}. Verifie la configuration Supabase.
+            </p>
+            <p className="mt-2 text-sm text-gray-400">
+              Debug: user_id={user.id}, error={paidResult.error}
             </p>
           </div>
         </section>
@@ -42,6 +53,9 @@ export default async function EspaceMembrePage() {
             </h1>
             <p className="mb-8 text-neutral-400 max-w-md">
               Tu n'as pas encore acheté de formation.
+            </p>
+            <p className="mt-2 text-sm text-gray-400">
+              Debug: user_id={user.id}, paid_ids=[], purchases_table_check=true
             </p>
             <Link
               href="/formations"
@@ -59,6 +73,13 @@ export default async function EspaceMembrePage() {
   const unlockedFormations = isAdmin
     ? formations
     : formations.filter((formation) => paidResult.ok && paidResult.ids.has(formation.id));
+
+  console.log('Formations filtered for user:', {
+    isAdmin,
+    totalFormations: formations.length,
+    unlockedCount: unlockedFormations.length,
+    paidIds: paidResult.ok ? Array.from(paidResult.ids) : []
+  });
 
   return (
     <div className="min-h-screen">
