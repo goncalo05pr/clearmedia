@@ -54,46 +54,80 @@ export async function POST(request: Request) {
     if (userId && formationId) {
       console.log('Inserting purchase into database...');
       
-      const { data, error } = await getSupabaseAdmin().from("purchases").upsert(
-        {
-          user_id: userId,
-          formation_id: formationId,
-          stripe_session_id: session.id,
-          status: "paid",
-          amount: parseFloat(formationPrice || '0'),
-          created_at: new Date().toISOString()
-        },
-        { onConflict: "stripe_session_id" },
-      );
+      try {
+        const supabaseAdmin = getSupabaseAdmin();
+        console.log('Supabase admin client created');
+        
+        const { data, error } = await supabaseAdmin.from("purchases").upsert(
+          {
+            user_id: userId,
+            formation_id: formationId,
+            stripe_session_id: session.id,
+            status: "paid",
+            amount: parseFloat(formationPrice || '0'),
+            created_at: new Date().toISOString()
+          },
+          { onConflict: "stripe_session_id" },
+        );
 
-      if (error) {
-        console.error('Failed to insert purchase:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        if (error) {
+          console.error('Failed to insert purchase:', error);
+          console.error('Error details:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code
+          });
+          return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+
+        console.log('Purchase inserted successfully:', data);
+      } catch (supabaseError: any) {
+        console.error('Supabase connection error:', supabaseError);
+        return NextResponse.json({ error: `Database error: ${supabaseError.message}` }, { status: 500 });
       }
-
-      console.log('Purchase inserted successfully:', data);
 
       // Send purchase confirmation email
       try {
         console.log('Sending purchase confirmation email...');
         
         // Get user email
-        const { data: userData } = await getSupabaseAdmin()
+        const { data: userData, error: userError } = await getSupabaseAdmin()
           .from('profiles')
           .select('email')
           .eq('id', userId)
           .single();
 
-        console.log('User data for email:', userData);
+        if (userError) {
+          console.error('Failed to get user data:', userError);
+          console.error('User error details:', {
+            message: userError.message,
+            details: userError.details,
+            hint: userError.hint,
+            code: userError.code
+          });
+        } else {
+          console.log('User data for email:', userData);
+        }
 
         // Get formation details
-        const { data: formationData } = await getSupabaseAdmin()
+        const { data: formationData, error: formationError } = await getSupabaseAdmin()
           .from('formations')
           .select('title')
           .eq('id', formationId)
           .single();
 
-        console.log('Formation data for email:', formationData);
+        if (formationError) {
+          console.error('Failed to get formation data:', formationError);
+          console.error('Formation error details:', {
+            message: formationError.message,
+            details: formationError.details,
+            hint: formationError.hint,
+            code: formationError.code
+          });
+        } else {
+          console.log('Formation data for email:', formationData);
+        }
 
         if (userData?.email && formationData?.title) {
           const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://kliqz.vercel.app'}/api/emails/purchase`, {
@@ -117,12 +151,16 @@ export async function POST(request: Request) {
           }
         } else {
           console.error('Missing user email or formation title for email');
+          console.log('User data:', userData);
+          console.log('Formation data:', formationData);
         }
       } catch (emailError: any) {
         console.error('Error sending purchase confirmation email:', emailError.message);
+        console.error('Email error stack:', emailError.stack);
       }
     } else {
       console.error('Missing userId or formationId in session metadata');
+      console.log('Available metadata:', session.metadata);
     }
   } else {
     console.log('Ignoring non-checkout.session.completed event:', event.type);
