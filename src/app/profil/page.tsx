@@ -435,22 +435,20 @@ export default function ProfilePage() {
                   />
                 </div>
 
-                {formData.newPassword || formData.confirmPassword ? (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Confirmer le mot de passe
-                    </label>
-                    <PasswordInput
-                      key="confirm-password-field"
-                      value={formData.confirmPassword}
-                      onChange={(value) => setFormData({...formData, confirmPassword: value})}
-                      placeholder="Confirmer votre nouveau mot de passe"
-                      minLength={8}
-                      autoComplete="new-password"
-                      defaultValue=""
-                    />
-                  </div>
-                ) : null}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Confirmer le nouveau mot de passe
+                  </label>
+                  <PasswordInput
+                    key="confirm-password-field"
+                    value={formData.confirmPassword}
+                    onChange={(value) => setFormData({...formData, confirmPassword: value})}
+                    placeholder="Confirmer votre nouveau mot de passe"
+                    minLength={8}
+                    autoComplete="new-password"
+                    defaultValue=""
+                  />
+                </div>
               </div>
 
               {formData.newPassword && (
