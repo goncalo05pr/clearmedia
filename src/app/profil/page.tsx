@@ -54,6 +54,9 @@ export default function ProfilePage() {
           confirmPassword: ""
         });
 
+        // Forcer les champs mot de passe à être vides
+        resetPasswordFields();
+
         setPreferences({
           emailNotifications: profileData?.user_metadata?.emailNotifications ?? true,
           pushNotifications: profileData?.user_metadata?.pushNotifications ?? false,
@@ -412,6 +415,7 @@ export default function ProfilePage() {
                     placeholder="Laisser vide pour ne pas changer"
                     minLength={8}
                     autoComplete="new-password"
+                    defaultValue=""
                   />
                 </div>
 
@@ -427,6 +431,7 @@ export default function ProfilePage() {
                       placeholder="Confirmer votre nouveau mot de passe"
                       minLength={8}
                       autoComplete="new-password"
+                      defaultValue=""
                     />
                   </div>
                 )}
