@@ -54,8 +54,14 @@ export default function ProfilePage() {
           confirmPassword: ""
         });
 
-        // Forcer les champs mot de passe à être vides
-        resetPasswordFields();
+        // Forcer les champs mot de passe à être vides (double sécurité)
+        setTimeout(() => {
+          setFormData(prev => ({
+            ...prev,
+            newPassword: "",
+            confirmPassword: ""
+          }));
+        }, 100);
 
         setPreferences({
           emailNotifications: profileData?.user_metadata?.emailNotifications ?? true,
@@ -429,7 +435,7 @@ export default function ProfilePage() {
                   />
                 </div>
 
-                {formData.newPassword && (
+                {formData.newPassword || formData.confirmPassword ? (
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Confirmer le mot de passe
@@ -444,7 +450,7 @@ export default function ProfilePage() {
                       defaultValue=""
                     />
                   </div>
-                )}
+                ) : null}
               </div>
 
               {formData.newPassword && (
