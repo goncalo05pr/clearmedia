@@ -9,6 +9,7 @@ interface Client {
   name?: string;
   phone?: string;
   created_at: string;
+  suspended?: boolean;
   user_metadata?: {
     name?: string;
     phone?: string;
@@ -33,6 +34,7 @@ export default function CRMModule() {
   const [loading, setLoading] = useState(true);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   useEffect(() => {
     const loadClientsAndPurchases = async () => {
@@ -98,6 +100,63 @@ export default function CRMModule() {
     return purchases.filter(p => p.user_id === clientId);
   };
 
+  const handleSuspendUser = async (userId: string, suspended: boolean) => {
+    setActionLoading(userId);
+    try {
+      const response = await fetch('/api/admin/suspend-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, suspended })
+      });
+
+      if (response.ok) {
+        // Mettre à jour l'état local
+        setClients(prev => prev.map(client => 
+          client.id === userId ? { ...client, suspended } : client
+        ));
+        
+        // Mettre à jour le client sélectionné si nécessaire
+        if (selectedClient?.id === userId) {
+          setSelectedClient(prev => prev ? { ...prev, suspended } : null);
+        }
+      } else {
+        alert('Erreur lors de la suspension/réactivation');
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      alert('Erreur lors de la suspension/réactivation');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleRevokeFormation = async (userId: string, formationId: string, status: string) => {
+    setActionLoading(`${userId}-${formationId}`);
+    try {
+      const response = await fetch('/api/admin/revoke-formation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, formationId, status })
+      });
+
+      if (response.ok) {
+        // Mettre à jour l'état local
+        setPurchases(prev => prev.map(purchase => 
+          purchase.user_id === userId && purchase.formation_id === formationId 
+            ? { ...purchase, status }
+            : purchase
+        ));
+      } else {
+        alert('Erreur lors de la révocation/réactivation');
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      alert('Erreur lors de la révocation/réactivation');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -140,6 +199,7 @@ export default function CRMModule() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Téléphone</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inscription</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Achats</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total dépensé</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -168,18 +228,48 @@ export default function CRMModule() {
                       <td className="px-6 py-4 text-sm text-gray-600">
                         {new Date(client.created_at).toLocaleDateString('fr-FR')}
                       </td>
+                      <td className="px-6 py-4 text-sm">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          client.suspended 
+                            ? 'bg-red-100 text-red-800' 
+                            : 'bg-green-100 text-green-800'
+                        }`}>
+                          {client.suspended ? 'Suspendu' : 'Actif'}
+                        </span>
+                      </td>
                       <td className="px-6 py-4 text-sm text-gray-600">{clientPurchases.length}</td>
                       <td className="px-6 py-4 font-medium text-gray-900">{totalSpent}€</td>
                       <td className="px-6 py-4">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedClient(client);
-                          }}
-                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                        >
-                          Voir détails
-                        </button>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedClient(client);
+                            }}
+                            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                          >
+                            Voir détails
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSuspendUser(client.id, !client.suspended);
+                            }}
+                            disabled={actionLoading === client.id}
+                            className={`text-sm font-medium ${
+                              client.suspended
+                                ? 'text-green-600 hover:text-green-800'
+                                : 'text-red-600 hover:text-red-800'
+                            } ${actionLoading === client.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          >
+                            {actionLoading === client.id 
+                              ? 'Chargement...' 
+                              : client.suspended 
+                                ? 'Réactiver' 
+                                : 'Suspendre'
+                            }
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -213,8 +303,12 @@ export default function CRMModule() {
                   <div><span className="font-medium">Téléphone:</span> {selectedClient.user_metadata?.phone || selectedClient.phone || 'Non renseigné'}</div>
                   <div><span className="font-medium">Inscription:</span> {new Date(selectedClient.created_at).toLocaleDateString('fr-FR')}</div>
                   <div><span className="font-medium">Statut:</span> 
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                      Actif
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      selectedClient.suspended 
+                        ? 'bg-red-100 text-red-800' 
+                        : 'bg-green-100 text-green-800'
+                    }`}>
+                      {selectedClient.suspended ? 'Suspendu' : 'Actif'}
                     </span>
                   </div>
                 </div>
@@ -226,12 +320,43 @@ export default function CRMModule() {
                   {getClientPurchases(selectedClient.id).length === 0 ? (
                     <p className="text-gray-500">Aucun achat pour ce client</p>
                   ) : (
-                    getClientPurchases(selectedClient.id).slice(0, 3).map((purchase) => (
+                    getClientPurchases(selectedClient.id).map((purchase) => (
                       <div key={purchase.id} className="p-3 bg-gray-50 rounded text-sm">
-                        <div className="font-medium text-gray-900">{purchase.formations?.title || 'Formation inconnue'}</div>
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="font-medium text-gray-900">{purchase.formations?.title || 'Formation inconnue'}</div>
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            purchase.status === 'revoked' 
+                              ? 'bg-red-100 text-red-800' 
+                              : 'bg-green-100 text-green-800'
+                          }`}>
+                            {purchase.status === 'revoked' ? 'Révoqué' : 'Actif'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center mb-2">
                           <span className="text-gray-600">{new Date(purchase.created_at).toLocaleDateString('fr-FR')}</span>
                           <span className="font-semibold text-green-600">{purchase.amount}€</span>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleRevokeFormation(
+                              selectedClient.id, 
+                              purchase.formation_id, 
+                              purchase.status === 'revoked' ? 'paid' : 'revoked'
+                            )}
+                            disabled={actionLoading === `${selectedClient.id}-${purchase.formation_id}`}
+                            className={`text-xs font-medium px-2 py-1 rounded ${
+                              purchase.status === 'revoked'
+                                ? 'bg-green-600 hover:bg-green-700 text-white'
+                                : 'bg-red-600 hover:bg-red-700 text-white'
+                            } ${actionLoading === `${selectedClient.id}-${purchase.formation_id}` ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          >
+                            {actionLoading === `${selectedClient.id}-${purchase.formation_id}`
+                              ? 'Chargement...'
+                              : purchase.status === 'revoked'
+                                ? 'Réactiver'
+                                : 'Révoquer'
+                            }
+                          </button>
                         </div>
                       </div>
                     ))
