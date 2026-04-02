@@ -40,10 +40,10 @@ export function AdminSidebar({ isOpen, onToggle }: AdminSidebarProps) {
       
       {/* Sidebar */}
       <div className={`
-        fixed left-0 top-0 h-full w-64 bg-black border-r border-white/10 z-50
+        fixed left-0 top-0 h-full w-64 bg-[#0a0a0a] border-r border-white/10 z-50
         transform transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:translate-x-0 lg:static lg:z-auto
+        lg:relative lg:translate-x-0 lg:z-auto lg:flex-shrink-0
       `}>
         <div className="flex flex-col h-full">
           {/* Header */}

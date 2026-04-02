@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import FormationsModule from "@/components/admin/formations-module";
-import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { useRouter } from "next/navigation";
 
 export default function AdminFormationsPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     async function checkAdmin() {
@@ -18,7 +18,7 @@ export default function AdminFormationsPage() {
       const userRole = user?.user_metadata?.role || user?.app_metadata?.role;
       
       if (!user || userRole !== 'admin') {
-        window.location.href = '/';
+        router.push('/');
         return;
       }
 
@@ -27,11 +27,11 @@ export default function AdminFormationsPage() {
     }
 
     checkAdmin();
-  }, []);
+  }, [router]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-[#0a0a0a] to-black flex items-center justify-center">
+      <div className="flex items-center justify-center h-full">
         <div className="animate-spin w-12 h-12 border-4 border-[#ff4d2e] border-t-transparent rounded-full"></div>
       </div>
     );
@@ -39,7 +39,7 @@ export default function AdminFormationsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-[#0a0a0a] to-black flex items-center justify-center">
+      <div className="flex items-center justify-center h-full">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Accès non autorisé</h1>
           <p className="text-gray-300">Vous devez être administrateur pour accéder à cette page.</p>
@@ -48,16 +48,5 @@ export default function AdminFormationsPage() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-[#0a0a0a] to-black">
-      <div className="flex">
-        <AdminSidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
-        <div className="flex-1 lg:ml-64">
-          <div className="p-8">
-            <FormationsModule />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return <FormationsModule />;
 }
