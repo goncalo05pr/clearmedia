@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import DashboardModule from "@/components/admin/dashboard-module";
+import SettingsModule from "@/components/admin/settings-module";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 
-export default function AdminDashboard() {
+export default function AdminSettingsPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -54,7 +54,7 @@ export default function AdminDashboard() {
         <AdminSidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
         <div className="flex-1 lg:ml-64">
           <div className="p-8">
-            <DashboardModule />
+            <SettingsModule />
           </div>
         </div>
       </div>
