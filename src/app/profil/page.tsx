@@ -61,7 +61,7 @@ export default function ProfilePage() {
             newPassword: "",
             confirmPassword: ""
           }));
-        }, 100);
+        }, 500);
 
         setPreferences({
           emailNotifications: profileData?.user_metadata?.emailNotifications ?? true,
@@ -245,12 +245,13 @@ export default function ProfilePage() {
           </header>
 
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Champ caché pour tromper le navigateur */}
+            {/* Champ visible en haut pour tromper le navigateur */}
             <input
               type="text"
               name="username"
               autoComplete="username"
-              style={{ display: 'none' }}
+              readOnly
+              className="w-full h-0 opacity-0 pointer-events-none absolute -top-10"
               tabIndex={-1}
               aria-hidden="true"
             />
