@@ -42,13 +42,20 @@ export default function CRMModule() {
         const supabase = createClient();
         
         // Récupérer tous les utilisateurs depuis l'API admin
+        console.log('🔍 DEBUG - Fetching /api/admin/users...');
         const response = await fetch('/api/admin/users');
+        console.log('🔍 DEBUG - Response status:', response.status);
+        console.log('🔍 DEBUG - Response ok:', response.ok);
+        
         const data = await response.json();
+        console.log('🔍 DEBUG - Raw API response:', data);
+        
         const users = data.users;
         const authError = data.error;
         
-        console.log('API Response:', data); // Debug
-        console.log('Users found:', users?.length); // Debug
+        console.log('🔍 DEBUG - Users extracted:', users);
+        console.log('🔍 DEBUG - Users length:', users?.length);
+        console.log('🔍 DEBUG - Auth error:', authError);
         
         if (authError || !response.ok) {
           console.error('Erreur récupération utilisateurs auth:', authError);
