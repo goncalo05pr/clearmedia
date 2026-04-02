@@ -43,7 +43,12 @@ export default function CRMModule() {
         
         // Récupérer tous les utilisateurs depuis l'API admin
         const response = await fetch('/api/admin/users');
-        const { users, error: authError } = await response.json();
+        const data = await response.json();
+        const users = data.users;
+        const authError = data.error;
+        
+        console.log('API Response:', data); // Debug
+        console.log('Users found:', users?.length); // Debug
         
         if (authError || !response.ok) {
           console.error('Erreur récupération utilisateurs auth:', authError);
@@ -187,26 +192,26 @@ export default function CRMModule() {
 
   return (
     <div className="space-y-6">
-      <h3 className="text-xl font-semibold text-white mb-4">🤝 CRM - Gestion des Clients</h3>
+      <h3 className="text-2xl font-syne font-semibold text-white mb-6">🤝 CRM - Gestion des Clients</h3>
       
       {/* Search Bar */}
-      <div className="bg-[#0a0a0a] rounded-lg p-4 shadow-sm border border-white/10 mb-6">
+      <div className="bg-[#0a0a0a] rounded-xl p-4 border border-white/10 backdrop-blur-sm">
         <input
           type="text"
           placeholder="Rechercher par nom ou email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 bg-black/50 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#ff4d2e]/50"
+          className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#ff4d2e]/50 focus:border-[#ff4d2e]/50 transition-all"
         />
       </div>
 
       {/* Clients Table */}
-      <div className="bg-[#0a0a0a] rounded-lg shadow-sm border border-white/10 overflow-hidden">
+      <div className="bg-[#0a0a0a] rounded-xl border border-white/10 backdrop-blur-sm overflow-hidden">
         {filteredClients.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-4xl mb-4">🔍</div>
-            <p className="text-gray-400 text-lg">Aucun client pour l'instant</p>
-            <p className="text-gray-500 text-sm mt-2">
+          <div className="text-center py-16">
+            <div className="text-5xl mb-4">🔍</div>
+            <p className="text-gray-300 text-xl font-medium mb-2">Aucun client pour l'instant</p>
+            <p className="text-gray-500 text-sm">
               {searchTerm ? 'Aucun résultat trouvé pour cette recherche' : 'Commencez par ajouter des clients via la page d\'inscription'}
             </p>
           </div>
@@ -215,17 +220,17 @@ export default function CRMModule() {
             <table className="w-full">
               <thead className="bg-black/50 border-b border-white/10">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Client</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Email</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Téléphone</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Inscription</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Statut</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Achats</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Total dépensé</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-4 text-left text-xs font-syne font-semibold text-gray-400 uppercase tracking-wider">Client</th>
+                  <th className="px-6 py-4 text-left text-xs font-syne font-semibold text-gray-400 uppercase tracking-wider">Email</th>
+                  <th className="px-6 py-4 text-left text-xs font-syne font-semibold text-gray-400 uppercase tracking-wider">Téléphone</th>
+                  <th className="px-6 py-4 text-left text-xs font-syne font-semibold text-gray-400 uppercase tracking-wider">Inscription</th>
+                  <th className="px-6 py-4 text-left text-xs font-syne font-semibold text-gray-400 uppercase tracking-wider">Statut</th>
+                  <th className="px-6 py-4 text-left text-xs font-syne font-semibold text-gray-400 uppercase tracking-wider">Achats</th>
+                  <th className="px-6 py-4 text-left text-xs font-syne font-semibold text-gray-400 uppercase tracking-wider">Total dépensé</th>
+                  <th className="px-6 py-4 text-left text-xs font-syne font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/10">
+              <tbody className="divide-y divide-white/5">
                 {filteredClients.map((client) => {
                   const clientPurchases = getClientPurchases(client.id);
                   const totalSpent = clientPurchases.reduce((sum, p) => sum + (p.amount || 0), 0);
@@ -233,7 +238,7 @@ export default function CRMModule() {
                   return (
                     <tr 
                       key={client.id} 
-                      className="hover:bg-black/30 cursor-pointer transition-colors"
+                      className="hover:bg-white/5 cursor-pointer transition-all duration-200"
                       onClick={() => setSelectedClient(client)}
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -249,10 +254,10 @@ export default function CRMModule() {
                         {new Date(client.created_at).toLocaleDateString('fr-FR')}
                       </td>
                       <td className="px-6 py-4 text-sm">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        <span className={`inline-flex px-3 py-1 text-xs font-syne font-semibold rounded-full border ${
                           client.suspended 
-                            ? 'bg-red-500/20 text-red-400 border border-red-500/30' 
-                            : 'bg-green-500/20 text-green-400 border border-green-500/30'
+                            ? 'bg-red-500/20 text-red-400 border-red-500/30' 
+                            : 'bg-green-500/20 text-green-400 border-green-500/30'
                         }`}>
                           {client.suspended ? 'Suspendu' : 'Actif'}
                         </span>
@@ -260,13 +265,13 @@ export default function CRMModule() {
                       <td className="px-6 py-4 text-sm text-gray-300">{clientPurchases.length}</td>
                       <td className="px-6 py-4 font-medium text-white">{totalSpent}€</td>
                       <td className="px-6 py-4">
-                        <div className="flex space-x-2">
+                        <div className="flex space-x-3">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedClient(client);
                             }}
-                            className="text-[#ff4d2e] hover:text-[#ff6b3d] text-sm font-medium transition-colors"
+                            className="text-[#ff4d2e] hover:text-[#ff6b3d] text-sm font-medium transition-colors duration-200"
                           >
                             Voir détails
                           </button>
@@ -276,7 +281,7 @@ export default function CRMModule() {
                               handleSuspendUser(client.id, !client.suspended);
                             }}
                             disabled={actionLoading === client.id}
-                            className={`text-sm font-medium transition-colors ${
+                            className={`text-sm font-medium transition-colors duration-200 ${
                               client.suspended
                                 ? 'text-green-400 hover:text-green-300'
                                 : 'text-red-400 hover:text-red-300'
@@ -302,31 +307,46 @@ export default function CRMModule() {
 
       {/* Client Details Modal */}
       {selectedClient && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-          <div className="bg-[#0a0a0a] rounded-lg p-6 max-w-2xl w-full mx-4 max-h-screen overflow-y-auto border border-white/10">
-            <div className="flex justify-between items-center mb-4">
-              <h4 className="text-lg font-semibold text-white">Détails du Client</h4>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#0a0a0a] rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-white/10 backdrop-blur-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h4 className="text-2xl font-syne font-semibold text-white">Détails du Client</h4>
               <button 
                 onClick={() => setSelectedClient(null)}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white transition-colors duration-200 p-2 hover:bg-white/5 rounded-lg"
               >
-                ✕
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div>
-                <h5 className="font-medium text-white mb-2">Informations personnelles</h5>
-                <div className="space-y-2 text-sm">
-                  <div><span className="font-medium text-gray-400">Nom:</span> {selectedClient.name || selectedClient.user_metadata?.name || 'Non défini'}</div>
-                  <div><span className="font-medium text-gray-400">Email:</span> {selectedClient.email}</div>
-                  <div><span className="font-medium text-gray-400">Téléphone:</span> {selectedClient.user_metadata?.phone || selectedClient.phone || 'Non renseigné'}</div>
-                  <div><span className="font-medium text-gray-400">Inscription:</span> {new Date(selectedClient.created_at).toLocaleDateString('fr-FR')}</div>
-                  <div><span className="font-medium text-gray-400">Statut:</span> 
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                <h5 className="text-lg font-syne font-semibold text-white mb-4">Informations personnelles</h5>
+                <div className="space-y-4 bg-black/30 rounded-xl p-6 border border-white/5">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Nom:</span> 
+                    <span className="text-white font-medium">{selectedClient.name || selectedClient.user_metadata?.name || 'Non défini'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Email:</span> 
+                    <span className="text-white font-medium">{selectedClient.email}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Téléphone:</span> 
+                    <span className="text-white font-medium">{selectedClient.user_metadata?.phone || selectedClient.phone || 'Non renseigné'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Inscription:</span> 
+                    <span className="text-white font-medium">{new Date(selectedClient.created_at).toLocaleDateString('fr-FR')}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Statut:</span> 
+                    <span className={`inline-flex px-3 py-1 text-xs font-syne font-semibold rounded-full border ${
                       selectedClient.suspended 
-                        ? 'bg-red-500/20 text-red-400 border border-red-500/30' 
-                        : 'bg-green-500/20 text-green-400 border border-green-500/30'
+                        ? 'bg-red-500/20 text-red-400 border-red-500/30' 
+                        : 'bg-green-500/20 text-green-400 border-green-500/30'
                     }`}>
                       {selectedClient.suspended ? 'Suspendu' : 'Actif'}
                     </span>
@@ -335,28 +355,30 @@ export default function CRMModule() {
               </div>
               
               <div>
-                <h5 className="font-medium text-white mb-2">Formations achetées</h5>
-                <div className="space-y-2">
+                <h5 className="text-lg font-syne font-semibold text-white mb-4">Formations achetées</h5>
+                <div className="space-y-3 max-h-96 overflow-y-auto">
                   {getClientPurchases(selectedClient.id).length === 0 ? (
-                    <p className="text-gray-400">Aucune formation achetée</p>
+                    <div className="text-center py-8 bg-black/30 rounded-xl border border-white/5">
+                      <p className="text-gray-400">Aucune formation achetée</p>
+                    </div>
                   ) : (
                     getClientPurchases(selectedClient.id).map((purchase) => (
-                      <div key={purchase.id} className="p-3 bg-black/50 rounded-lg text-sm border border-white/10">
-                        <div className="flex justify-between items-start mb-2">
-                          <div className="font-medium text-white">{purchase.formations?.title || 'Formation inconnue'}</div>
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      <div key={purchase.id} className="bg-black/30 rounded-xl p-4 border border-white/5 hover:bg-black/40 transition-all duration-200">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="font-medium text-white flex-1">{purchase.formations?.title || 'Formation inconnue'}</div>
+                          <span className={`inline-flex px-2 py-1 text-xs font-syne font-semibold rounded-full border ml-3 ${
                             purchase.status === 'revoked' 
-                              ? 'bg-red-500/20 text-red-400 border border-red-500/30' 
-                              : 'bg-green-500/20 text-green-400 border border-green-500/30'
+                              ? 'bg-red-500/20 text-red-400 border-red-500/30' 
+                              : 'bg-green-500/20 text-green-400 border-green-500/30'
                           }`}>
                             {purchase.status === 'revoked' ? 'Révoqué' : 'Actif'}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-gray-400">{new Date(purchase.created_at).toLocaleDateString('fr-FR')}</span>
+                        <div className="flex justify-between items-center mb-3">
+                          <span className="text-gray-400 text-sm">{new Date(purchase.created_at).toLocaleDateString('fr-FR')}</span>
                           <span className="font-semibold text-[#ff4d2e]">{purchase.amount}€</span>
                         </div>
-                        <div className="flex space-x-2">
+                        <div className="flex space-x-3">
                           <button
                             onClick={() => handleRevokeFormation(
                               selectedClient.id, 
@@ -364,7 +386,7 @@ export default function CRMModule() {
                               purchase.status === 'revoked' ? 'paid' : 'revoked'
                             )}
                             disabled={actionLoading === `${selectedClient.id}-${purchase.formation_id}`}
-                            className={`text-xs font-medium px-3 py-1 rounded transition-colors ${
+                            className={`text-xs font-syne font-semibold px-4 py-2 rounded-lg transition-all duration-200 ${
                               purchase.status === 'revoked'
                                 ? 'bg-green-600 hover:bg-green-700 text-white'
                                 : 'bg-red-600 hover:bg-red-700 text-white'
