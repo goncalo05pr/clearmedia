@@ -269,6 +269,9 @@ export default function CRMModule() {
                         <div className="text-sm text-gray-400">{client.email}</div>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-300">
+                        {client.email}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-300">
                         {client.user_metadata?.phone || client.phone || '-'}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-300">
