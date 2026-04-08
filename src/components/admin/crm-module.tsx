@@ -143,7 +143,12 @@ export default function CRMModule() {
   );
 
   const getClientPurchases = (clientId: string) => {
-    return purchases.filter(p => p.user_id === clientId);
+    const clientPurchases = purchases.filter(p => p.user_id === clientId);
+    console.log(`🔍 DEBUG - Purchases for client ${clientId}:`, clientPurchases);
+    console.log(`🔍 DEBUG - Amounts for client ${clientId}:`, clientPurchases.map(p => p.amount));
+    const totalSpent = clientPurchases.reduce((sum, p) => sum + (p.amount || 0), 0);
+    console.log(`🔍 DEBUG - Total spent for client ${clientId}:`, totalSpent);
+    return clientPurchases;
   };
 
   const handleSuspendUser = async (userId: string, suspended: boolean) => {
@@ -255,6 +260,7 @@ export default function CRMModule() {
                 {filteredClients.map((client) => {
                   const clientPurchases = getClientPurchases(client.id);
                   const totalSpent = clientPurchases.reduce((sum, p) => sum + (p.amount || 0), 0);
+                  console.log(`🔍 DEBUG - Final total for ${client.email}:`, totalSpent);
                   
                   return (
                     <tr 
