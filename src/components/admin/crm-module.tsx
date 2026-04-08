@@ -16,6 +16,11 @@ interface Client {
   };
 }
 
+interface Formation {
+  id: string;
+  title: string;
+}
+
 interface Purchase {
   id: string;
   user_id: string;
@@ -81,20 +86,22 @@ export default function CRMModule() {
           };
         }) || [];
         
-        // Récupérer tous les achats
+        // Récupérer tous les achats (sans jointure pour éviter l'erreur 400)
         const { data: purchasesData, error: purchasesError } = await supabase
           .from('purchases')
-          .select(`
-            *,
-            formations!inner(title)
-          `);
+          .select('*');
 
         // Récupérer les formations séparément pour les joindre
         const formationIds = [...new Set(purchasesData?.map(p => p.formation_id) || [])];
-        const { data: formationsData } = await supabase
-          .from('formations')
-          .select('id, title')
-          .in('id', formationIds);
+        
+        let formationsData: Formation[] = [];
+        if (formationIds.length > 0) {
+          const { data: formations } = await supabase
+            .from('formations')
+            .select('id, title')
+            .in('id', formationIds);
+          formationsData = formations || [];
+        }
 
         // Combiner les données
         const purchasesWithFormations = purchasesData?.map(purchase => {
@@ -105,11 +112,18 @@ export default function CRMModule() {
           };
         }) || [];
 
+        console.log('🔍 DEBUG - Purchases data:', purchasesData);
+        console.log('🔍 DEBUG - Formation IDs:', formationIds);
+        console.log('🔍 DEBUG - Formations data:', formationsData);
+        console.log('🔍 DEBUG - Purchases with formations:', purchasesWithFormations);
+
         if (profilesError || purchasesError) {
           console.error('Error loading CRM data:', { profilesError, purchasesError });
         } else {
           setClients(clients || []);
           setPurchases(purchasesWithFormations || []);
+          console.log('🔍 DEBUG - Final clients set:', clients?.length);
+          console.log('🔍 DEBUG - Final purchases set:', purchasesWithFormations?.length);
         }
         
         setLoading(false);
